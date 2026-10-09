@@ -1,0 +1,58 @@
+# =====================================================================
+# AI 工作流项目集 · 根级 .gitignore
+# 说明：本仓库为「项目集（Portfolio）」，各子项目依赖与配置各自维护，
+#      这里只统一忽略「密钥 / 依赖目录 / 运行时数据 / 调研中间产物」。
+# =====================================================================
+
+# ---------- 密钥与环境变量（绝不入库）----------
+.env
+.env.*
+!.env.example
+.env.local
+*.key
+*.pem
+
+# 前端页面的本地配置（内含 Dify API Key，绝不入库；模板 config.example.js 需入库）
+prompt auto-generate/config.js
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Node.js ----------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- 运行时数据 / 数据库（SQLite 及 WAL 附属文件）----------
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+data/exports/
+
+# ---------- 调研期抓取的中间产物（可安全删除，见《AI工作流目录结构说明.md》）----------
+_tree.json
+_dify_tree.json
+_tool_py.txt
+
+# ---------- 本地密钥备份（仅存于本机，用于回滚脱敏）----------
+SECRETS_BACKUP.local.md
+
+# ---------- 编辑器 / 操作系统 ----------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

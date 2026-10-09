@@ -1,0 +1,457 @@
+app:
+  description: 自动完成用户反馈的语义聚类、KANO分类与优先级排序，生成结构化需求报告
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: 用户反馈需求洞察工作流
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.15@1df8bd27d67c149e6db3c210830ef6e3857c5a9df5e8edbe9e785b995f337ef5
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1788343059401-source-1788343629129-target
+      selected: false
+      source: '1788343059401'
+      sourceHandle: source
+      target: '1788343629129'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1788343629129-source-1788347140939-target
+      source: '1788343629129'
+      sourceHandle: source
+      target: '1788347140939'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1788347140939-source-1788347265839-target
+      source: '1788347140939'
+      sourceHandle: source
+      target: '1788347265839'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1788347265839-false-1788347341595-target
+      source: '1788347265839'
+      sourceHandle: 'false'
+      target: '1788347341595'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1788347265839-true-1788347376055-target
+      source: '1788347265839'
+      sourceHandle: 'true'
+      target: '1788347376055'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - default: App Store
+          hint: ''
+          label: 数据源类型
+          max_length: 256
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: data_source
+        - default: 最近7天
+          hint: ''
+          label: 时间范围
+          max_length: 256
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: time_range
+        - default: 全部模块
+          hint: ''
+          label: 产品模块
+          max_length: 256
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: product_module
+        - default: ''
+          hint: ''
+          label: 用户反馈原始数据
+          max_length: 10000
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: feedback_data
+        - default: ''
+          hint: ''
+          label: 当前季度OKR重点
+          max_length: 2048
+          options: []
+          placeholder: ''
+          required: false
+          type: paragraph
+          variable: business_goal
+        - default: ''
+          hint: ''
+          label: 技术资源上限
+          max_length: 2048
+          options: []
+          placeholder: ''
+          required: false
+          type: paragraph
+          variable: resource_constraint
+      height: 238
+      id: '1788343059401'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 语义聚类
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: b6f01ede-7184-46b9-a686-9a63447c1e2a
+          role: system
+          text: '你是一位资深用户研究员。请对以下用户反馈数据进行：1.去重 2.情感标注(正面/中性/负面) 3.主题聚类(不超过15个) 4.频率统计。
+
+
+            请直接输出合法JSON，不要包含任何其他文字、markdown标记或代码块，格式如下：
+
+            {"themes":[{"theme_name":"","count":0,"sentiment_ratio":{"positive":0,"neutral":0,"negative":0},"representative_quotes":[]}]}
+
+
+            注意：theme_name必须根据实际数据提炼具体中文主题，quotes必须引用原始反馈中的真实原话。'
+        - id: 6f932f22-7441-4807-b550-5e607147be5d
+          role: user
+          text: '用户反馈数据：
+
+            {{feedback_data}}'
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              themes:
+                items:
+                  additionalProperties: false
+                  properties:
+                    count:
+                      type: string
+                    representative_quotes:
+                      items:
+                        type: string
+                      type: array
+                    sentiment_ratio:
+                      additionalProperties: false
+                      properties:
+                        negative:
+                          type: string
+                        neutral:
+                          type: string
+                        positive:
+                          type: string
+                      required:
+                      - positive
+                      - neutral
+                      - negative
+                      type: object
+                    theme_name:
+                      type: string
+                  required:
+                  - theme_name
+                  - count
+                  - sentiment_ratio
+                  - representative_quotes
+                  type: object
+                type: array
+            required:
+            - themes
+            type: object
+        structured_output_enabled: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 115
+      id: '1788343629129'
+      position:
+        x: 382
+        y: 282
+      positionAbsolute:
+        x: 382
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import json\nimport re\n\ndef main(cluster_result: str) -> dict:\n\
+          \    try:\n        # 1. 清洗可能存在的 Markdown 标签\n        cleaned_str = re.sub(r'^```json\\\
+          s*', '', cluster_result, flags=re.MULTILINE)\n        cleaned_str = re.sub(r'^```\\\
+          s*', '', cleaned_str, flags=re.MULTILINE)\n        cleaned_str = cleaned_str.strip()\n\
+          \        \n        # 2. 检查是否为空或纯中文字符\n        if not cleaned_str or re.match(r'^[\\\
+          u4e00-\\u9fa5\\w\\s\\.,!?，。！？]+$', cleaned_str):\n            return {\"\
+          is_valid\": False, \"valid_data\": \"\", \"error\": f\"模型未输出JSON，原始输出: {cleaned_str[:100]}\"\
+          }\n        \n        # 3. 解析 JSON\n        data = json.loads(cleaned_str)\n\
+          \        \n        # 4. 结构校验\n        if \"themes\" not in data or not isinstance(data[\"\
+          themes\"], list) or len(data[\"themes\"]) == 0:\n            return {\"\
+          is_valid\": False, \"valid_data\": \"\", \"error\": \"未识别到有效主题或themes字段缺失\"\
+          }\n            \n        return {\"is_valid\": True, \"valid_data\": cleaned_str,\
+          \ \"error\": \"\"}\n        \n    except json.JSONDecodeError as e:\n  \
+          \      return {\"is_valid\": False, \"valid_data\": \"\", \"error\": f\"\
+          输出不是合法JSON，解析错误: {str(e)}，原始输出前100字符: {cluster_result[:100]}\"}\n    except\
+          \ Exception as e:\n        return {\"is_valid\": False, \"valid_data\":\
+          \ \"\", \"error\": f\"未知错误: {str(e)}\"}"
+        code_language: python3
+        desc: 输出校验
+        outputs:
+          error:
+            children: null
+            type: string
+          is_valid:
+            children: null
+            type: boolean
+          valid_data:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1788343629129'
+          - text
+          value_type: string
+          variable: cluster_result
+      height: 79
+      id: '1788347140939'
+      position:
+        x: 684
+        y: 282
+      positionAbsolute:
+        x: 684
+        y: 282
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 732b0159-fbbb-461d-a6c6-bf831140f7c5
+            value: true
+            varType: boolean
+            variable_selector:
+            - '1788347140939'
+            - is_valid
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 123
+      id: '1788347265839'
+      position:
+        x: 986
+        y: 282
+      positionAbsolute:
+        x: 986
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1788347140939'
+          - error
+          value_type: string
+          variable: result
+        selected: false
+        title: 输出
+        type: end
+      height: 88
+      id: '1788347341595'
+      position:
+        x: 1288
+        y: 282
+      positionAbsolute:
+        x: 1288
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: KANO分类排序
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 7ff9857d-dc50-4d07-83ca-85c0ae208577
+          role: system
+          text: '你是产品经理，请对以下聚类后的用户需求进行KANO模型分类：
+
+
+            分类标准：
+
+            - 基本型(Must-be)：没有会不满，有了觉得理所当然
+
+            - 期望型(One-dimensional)：有了满意，没有不满，与满意度线性相关
+
+            - 兴奋型(Attractive)：没有不会不满，有了会惊喜
+
+            - 无差异型(Indifferent)：有无都不影响满意度
+
+            - 反向型(Reverse)：有了反而不满
+
+
+            同时请结合以下业务约束进行优先级排序：
+
+            - 当前季度'
+        selected: false
+        title: LLM 2
+        type: llm
+        vision:
+          enabled: false
+      height: 115
+      id: '1788347376055'
+      position:
+        x: 1288
+        y: 372
+      positionAbsolute:
+        x: 1288
+        y: 372
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: -29.000000000000227
+      y: 77.5
+      zoom: 1.0000000000000002
+  rag_pipeline_variables: []

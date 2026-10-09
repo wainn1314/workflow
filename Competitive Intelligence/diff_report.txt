@@ -1,0 +1,82 @@
+﻿workflow keys diff A-B: []
+workflow keys diff B-A: []
+A workflow keys: ['conversation_variables', 'environment_variables', 'features', 'graph', 'rag_pipeline_variables']
+B workflow keys: ['conversation_variables', 'environment_variables', 'features', 'graph', 'rag_pipeline_variables']
+A env vars:
+    JSONBIN_API_KEY | len(value)= 0
+B env vars:
+    JSONBIN_API_KEY | len(value)= 0
+A node ids: ['1900000000001', '1900000000002', '1900000000002start', '1900000000010', '1900000000011', '1900000000012', '1900000000013', '1900000000014', '1900000000015', '1900000000016', '1900000000017', '1900000000018', '1900000000019', '1900000000020', '1900000000021', '1900000000022', '1900000000023', '1900000000030', '1900000000031', '1900000000032', '1900000000033', '1900000000034', '1900000000040']
+B node ids: ['1900000000001', '1900000000002', '1900000000002start', '1900000000010', '1900000000011', '1900000000012', '1900000000013', '1900000000014', '1900000000015', '1900000000016', '1900000000017', '1900000000018', '1900000000019', '1900000000020', '1900000000021', '1900000000022', '1900000000023', '1900000000030', '1900000000031', '1900000000032', '1900000000033', '1900000000034', '1900000000040']
+nodes only in A: []
+nodes only in B: []
+### NODE 1900000000002 differs. title: '迭代监控竞品' vs '迭代监控竞品'
+--- competitor_monitor.yml
++++ 竞品动态自动监控.yml
+@@ -2,7 +2,7 @@
+  "desc": "遍历每个竞品 URL，抓取、对比、分析",
+  "error_handle_mode": "continue-on-error",
+  "flatten_output": true,
+- "height": 520,
++ "height": 584.1666666666666,
+  "is_parallel": false,
+  "iterator_input_type": "array[string]",
+  "iterator_selector": [
+@@ -19,5 +19,5 @@
+  "start_node_id": "1900000000002start",
+  "title": "迭代监控竞品",
+  "type": "iteration",
+- "width": 2680
++ "width": 3766
+ }
+--------------------------------------------------------------------------------
+### NODE 1900000000014 differs. title: '获取昨日快照' vs '获取昨日快照'
+--- competitor_monitor.yml
++++ 竞品动态自动监控.yml
+@@ -8,7 +8,7 @@
+   "type": "none"
+  },
+  "desc": "从 JSONBin 读取昨日页面快照",
+- "headers": "Content-Type: application/json\nX-Master-Key: {{#env.JSONBIN_API_KEY#}}\nX-Bin-Meta: false",
++ "headers": "Content-Type:application/json\nX-Master-Key:{{#env.JSONBIN_API_KEY#}}\nX-Bin-Meta:false",
+  "isInIteration": true,
+  "isInLoop": false,
+  "iteration_id": "1900000000002",
+--------------------------------------------------------------------------------
+### NODE 1900000000017 differs. title: '存储今日快照' vs '存储今日快照'
+--- competitor_monitor.yml
++++ 竞品动态自动监控.yml
+@@ -15,7 +15,7 @@
+   "type": "raw-text"
+  },
+  "desc": "PUT 将今日清洗结果写入 JSONBin",
+- "headers": "Content-Type: application/json\nX-Master-Key: {{#env.JSONBIN_API_KEY#}}",
++ "headers": "Content-Type:application/json\nX-Master-Key:{{#env.JSONBIN_API_KEY#}}",
+  "isInIteration": true,
+  "isInLoop": false,
+  "iteration_id": "1900000000002",
+--------------------------------------------------------------------------------
+### NODE 1900000000020 differs. title: '首次存储快照' vs '首次存储快照'
+--- competitor_monitor.yml
++++ 竞品动态自动监控.yml
+@@ -15,7 +15,7 @@
+   "type": "raw-text"
+  },
+  "desc": "首次运行时 PUT 写入今日快照",
+- "headers": "Content-Type: application/json\nX-Master-Key: {{#env.JSONBIN_API_KEY#}}",
++ "headers": "Content-Type:application/json\nX-Master-Key:{{#env.JSONBIN_API_KEY#}}",
+  "isInIteration": true,
+  "isInLoop": false,
+  "iteration_id": "1900000000002",
+--------------------------------------------------------------------------------
+### NODE 1900000000040 differs. title: '提取URL数组' vs '提取URL数组'
+--- competitor_monitor.yml
++++ 竞品动态自动监控.yml
+@@ -1,5 +1,5 @@
+ {
+- "code": "import json\n\ndef main(data) -> dict:\n    raw = None\n    if isinstance(data, dict):\n        raw = data.get('urls', data.get('url', []))\n    elif isinstance(data, str):\n        try:\n            obj = json.loads(data)\n            raw = obj.get('urls', obj.get('url', [])) if isinstance(obj, dict) else obj\n        except Exception:\n            raw = [data]\n    if not isinstance(raw, list):\n        raw = [raw] if raw else []\n    cleaned = []\n    seen = set()\n    for u in raw:\n        s = str(u).strip()\n        while s and s[0] in (chr(34), chr(39)) and s[-1] in (chr(34), chr(39)):\n            s = s[1:-1].strip()\n        if s.startswith(('http://', 'https://')) and s not in seen:\n            seen.add(s)\n            cleaned.append(s)\n    return {'url_list': cleaned}\n",
++ "code": "import json\n\ndef main(data) -> dict:\n    raw = None\n    if isinstance(data, dict):\n        competitor = data.get('competitor_urls', data)\n        raw = competitor.get('urls', competitor.get('url', []))\n    elif isinstance(data, str):\n        try:\n            obj = json.loads(data)\n            competitor = obj.get('competitor_urls', obj) if isinstance(obj, dict) else obj\n            raw = competitor.get('urls', competitor.get('url', [])) if isinstance(competitor, dict) else competitor\n        except Exception:\n            raw = [data]\n    if not isinstance(raw, list):\n        raw = [raw] if raw else []\n    cleaned = []\n    seen = set()\n    for u in raw:\n        s = str(u).strip()\n        while s and s[0] in (chr(34), chr(39)) and s[-1] in (chr(34), chr(39)):\n            s = s[1:-1].strip()\n        if s.startswith(('http://', 'https://')) and s not in seen:\n            seen.add(s)\n            cleaned.append(s)\n    return {'url_list': cleaned}",
+  "code_language": "python3",
+  "desc": "从开始节点 competitor_urls 对象中提取 urls 数组，供迭代节点使用",
+  "outputs": {
+--------------------------------------------------------------------------------

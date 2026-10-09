@@ -1,0 +1,761 @@
+# =====================================================================
+# 商品数据关联洞察与策略建议工作流 (Dify DSL)
+# 目标版本: Dify 1.17.x   适用模型: qwen / DeepSeek 等 Chat 模型
+# 节点链:
+#   开始(上传文件) → 文档提取器 → 数据校验与清洗(Code) → 销售表现分析(LLM)
+#   → 关联规则分析(Code) → 归因分析(LLM) → 策略建议(LLM) → 结束
+# 校验规则(运行时错误终止, 消息原文):
+#   - 缺少必要表头: "上传文件缺少必要字段，请检查表头是否包含商品ID、品类、日销量、毛利、复购率、价格带"
+#   - 数据行少于10条: "数据量过少，无法完成有效分析，请上传至少10条以上的商品数据"
+# 关联分析阈值: 最小支持度 0.05, 最小置信度 0.3, 提升度 >= 1
+# LLM 节点参数: temperature=0.3, max_tokens=4096
+#
+# 注意: 3 个 LLM 节点按分工指向官方插件模型:
+#   策略建议 = provider: deepseek,  model: deepseek-chat (对应 DeepSeek-V3)
+#   销售表现分析/归因分析 = provider: tongyi, model: qwen-max (qianwen-max)
+#   provider 必须写供应商短名, 不能写 langgenius/deepseek/deepseek 这类插件完整 ID。
+#   若导入后节点提示"大模型不兼容", 表示该工作区未安装对应插件或型号名不一致,
+#   在每个 LLM 节点下拉框里重新选择一次已安装的模型即可(改动随应用保存)。
+# =====================================================================
+app:
+  description: 上传包含商品ID、品类、日销量、毛利、复购率、价格带的商品数据文件，自动完成数据校验与清洗、销售表现分析、商品关联洞察、表现归因与经营策略建议。
+  icon: 📊
+  icon_background: '#E1F5FE'
+  mode: workflow
+  name: 商品数据关联洞察与策略建议工作流
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .csv
+      - .xls
+      - .xlsx
+      - .txt
+      - .md
+      allowed_file_types:
+      - document
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: true
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: start-to-doc-extractor
+      source: 'start'
+      sourceHandle: source
+      target: 'doc_extractor'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: code
+      id: doc-extractor-to-clean
+      source: 'doc_extractor'
+      sourceHandle: source
+      target: 'code_clean'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: clean-to-sales
+      source: 'code_clean'
+      sourceHandle: source
+      target: 'llm_sales'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: sales-to-assoc
+      source: 'llm_sales'
+      sourceHandle: source
+      target: 'code_assoc'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: assoc-to-attribution
+      source: 'code_assoc'
+      sourceHandle: source
+      target: 'llm_attribution'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: attribution-to-strategy
+      source: 'llm_attribution'
+      sourceHandle: source
+      target: 'llm_strategy'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: strategy-to-end
+      source: 'llm_strategy'
+      sourceHandle: source
+      target: 'end'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 上传包含表头(商品ID、品类、日销量、毛利、复购率、价格带)的商品数据文件，支持 CSV / Excel / TXT。
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 商品数据文件
+          max_length: null
+          options: []
+          required: true
+          type: file
+          variable: product_file
+          allowed_file_extensions:
+          - .csv
+          - .xls
+          - .xlsx
+          - .txt
+          - .md
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+      height: 90
+      id: 'start'
+      position:
+        x: 40
+        y: 300
+      positionAbsolute:
+        x: 40
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 提取上传文件为文本(Excel/CSV 会自动转为 Markdown 表格文本)。
+        selected: false
+        title: 文档提取器
+        type: document-extractor
+        variable_selector:
+        - 'start'
+        - product_file
+      height: 90
+      id: 'doc_extractor'
+      position:
+        x: 370
+        y: 300
+      positionAbsolute:
+        x: 370
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: |-
+          def main(raw_text: str) -> dict:
+              import re
+
+              REQUIRED = ["商品ID", "品类", "日销量", "毛利", "复购率", "价格带"]
+              MISSING_MSG = "上传文件缺少必要字段，请检查表头是否包含商品ID、品类、日销量、毛利、复购率、价格带"
+              TOO_FEW_MSG = "数据量过少，无法完成有效分析，请上传至少10条以上的商品数据"
+
+              def split_row(line):
+                  s = (line or "").strip()
+                  if not s:
+                      return []
+                  if s.startswith("|"):
+                      s = s.strip().strip("|")
+                      return [c.strip().replace("\\|", "|") for c in s.split("|")]
+                  return [c.strip() for c in re.split(r"[\t,，;；]+", s)]
+
+              def norm_h(h):
+                  h = re.sub(r"^[\s#*\-\u2022]+", "", (h or "")).strip().replace(" ", "").replace("\u00a0", "")
+                  return h
+
+              def norm_band(s):
+                  s = (s or "").strip()
+                  if not s:
+                      return "其他价格带"
+                  if "中高" in s:
+                      return "中高价格带"
+                  if "中低" in s:
+                      return "中低价格带"
+                  if "高" in s or "贵" in s or "高端" in s or "高档" in s:
+                      return "高价格带"
+                  if "低" in s or "实惠" in s or "经济" in s or "平价" in s or "入门" in s:
+                      return "低价格带"
+                  if "中" in s:
+                      return "中低价格带"
+                  return "其他价格带"
+
+              def to_num(v, as_int=False):
+                  s = str(v if v is not None else "").strip()
+                  s = s.replace("￥", "").replace("¥", "").replace(",", "").replace("，", "").replace("%", "")
+                  if not s or s in ("-", "--", "—", "NA", "N/A", "null", "None"):
+                      return 0
+                  try:
+                      f = float(s)
+                  except Exception:
+                      return 0
+                  return int(round(f)) if as_int else f
+
+              text = (raw_text or "").replace("\r\n", "\n").replace("\r", "\n").replace("\ufeff", "")
+              lines = [ln for ln in text.split("\n") if ln.strip()]
+
+              hdr_idx, headers = None, None
+              for i, ln in enumerate(lines):
+                  cells = split_row(ln)
+                  if any("商品ID" in c for c in cells):
+                      hdr_idx, headers = i, [norm_h(c) for c in cells]
+                      break
+              if hdr_idx is None or not headers:
+                  raise Exception(MISSING_MSG)
+              if any(c not in headers for c in REQUIRED):
+                  raise Exception(MISSING_MSG)
+              col = {h: headers.index(h) for h in REQUIRED}
+              cleaned = []
+              for ln in lines[hdr_idx + 1:]:
+                  if re.fullmatch(r"[\s|\-:]+", ln):
+                      continue
+                  cells = split_row(ln)
+                  if len(cells) < len(headers):
+                      cells = cells + [""] * (len(headers) - len(cells))
+                  pid = cells[col["商品ID"]].strip()
+                  cat = cells[col["品类"]].strip()
+                  if not pid and not cat:
+                      continue
+                  sale = to_num(cells[col["日销量"]], as_int=True)
+                  profit = round(to_num(cells[col["毛利"]]), 4)
+                  rebuy = to_num(cells[col["复购率"]])
+                  if rebuy > 1:
+                      rebuy = rebuy / 100.0
+                  rebuy = round(rebuy, 6)
+                  band = norm_band(cells[col["价格带"]])
+                  cleaned.append({
+                      "商品ID": str(pid),
+                      "品类": cat or "未知",
+                      "日销量": sale,
+                      "毛利": profit,
+                      "复购率": rebuy,
+                      "价格带": band,
+                      "日均毛利额": round(sale * profit, 2),
+                  })
+
+              if len(cleaned) < 10:
+                  raise Exception(TOO_FEW_MSG)
+
+              n = len(cleaned)
+              total_sale = sum(r["日销量"] for r in cleaned)
+              total_profit = sum(r["日均毛利额"] for r in cleaned)
+              avg_sale = total_sale / n
+              avg_profit = sum(r["毛利"] for r in cleaned) / n
+              avg_rebuy = sum(r["复购率"] for r in cleaned) / n
+
+              from collections import defaultdict
+              cat_rows = defaultdict(list)
+              band_rows = defaultdict(list)
+              for r in cleaned:
+                  cat_rows[r["品类"]].append(r)
+                  band_rows[r["价格带"]].append(r)
+
+              def stat(rows):
+                  m = len(rows)
+                  if m == 0:
+                      return (0, 0.0, 0.0, 0.0, 0.0)
+                  s2 = sum(x["日销量"] for x in rows)
+                  g2 = sum(x["日均毛利额"] for x in rows)
+                  return (m, s2, g2, round(sum(x["毛利"] for x in rows) / m, 4), round(sum(x["复购率"] for x in rows) / m, 6))
+
+              out = []
+              out.append("【总览】有效商品数=%d；覆盖品类数=%d；日销量合计=%d；估算日均毛利额合计=%s；平均毛利=%s；平均复购率=%s" % (
+                  n, len(cat_rows), total_sale, format(total_profit, ",.2f"), format(avg_profit, ".4f"), format(avg_rebuy, ".4f")))
+              out.append("【价格带分布】(商品数/销量占比/毛利额占比/平均毛利/平均复购率)")
+              bands_order = ["低价格带", "中低价格带", "中高价格带", "高价格带"]
+              for b in bands_order + [k for k in band_rows if k not in bands_order]:
+                  if b not in band_rows:
+                      continue
+                  m, s2, g2, ap, ar = stat(band_rows[b])
+                  out.append("- %s：商品数=%d 销量占比=%.1f%% 毛利额占比=%.1f%% 平均毛利=%s 平均复购率=%s" % (
+                      b, m, s2 * 100.0 / total_sale if total_sale else 0,
+                      g2 * 100.0 / total_profit if total_profit else 0, format(ap, ".4f"), format(ar, ".4f")))
+              out.append("【品类排名TOP5】(按估算日均毛利额)")
+              for cat, rows in sorted(cat_rows.items(), key=lambda kv: -sum(x["日均毛利额"] for x in kv[1]))[:5]:
+                  m, s2, g2, ap, ar = stat(rows)
+                  out.append("- %s：商品数=%d 日销量合计=%d 毛利额=%s 平均复购率=%s" % (cat, m, s2, format(g2, ",.2f"), format(ar, ".4f")))
+              out.append("【单品TOP10】(按日均毛利额=日销量×毛利)")
+              for r in sorted(cleaned, key=lambda x: -x["日均毛利额"])[:10]:
+                  out.append("- %s | %s | %s | 日销量=%d 毛利=%s 复购率=%s 日均毛利额=%s" % (
+                      r["商品ID"], r["品类"], r["价格带"], r["日销量"],
+                      format(r["毛利"], ".4f"), format(r["复购率"], ".4f"), format(r["日均毛利额"], ",.2f")))
+              out.append("【分层基准】平均日销量=%.2f；平均毛利=%.4f；平均复购率=%.4f(后续按是否高于均值划分高/低表现)" % (avg_sale, avg_profit, avg_rebuy))
+
+              return {"rows": cleaned, "summary_text": "\n".join(out)}
+        code_language: python3
+        desc: 校验表头与数据量、清洗数值与价格带并输出结构化行数据与概览文本。校验失败时终止运行并给出精确错误消息。
+        outputs:
+          rows:
+            children: null
+            type: array[object]
+          summary_text:
+            children: null
+            type: string
+        selected: false
+        title: 数据校验与清洗
+        type: code
+        variables:
+        - value_selector:
+          - 'doc_extractor'
+          - text
+          variable: raw_text
+      height: 54
+      id: 'code_clean'
+      position:
+        x: 700
+        y: 300
+      positionAbsolute:
+        x: 700
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 基于清洗后的商品数据做销售表现分析与商品分层分类。
+        title: 销售表现分析
+        type: llm
+        model:
+          provider: tongyi
+          name: qwen-max
+          mode: chat
+          completion_params:
+            temperature: 0.3
+            max_tokens: 4096
+        prompt_template:
+        - role: system
+          text: 你是一名资深零售电商数据分析师。你只能依据用户提供的数据进行分析，禁止编造不存在的数字。请全程使用简体中文。
+        - role: user
+          text: |
+            基于清洗后的商品数据（商品ID/品类/日销量/毛利/复购率/价格带/日均毛利额）完成销售表现分析与商品分层：
+
+            【清洗后数据概览】
+            {{#code_clean.summary_text#}}
+
+            任务要求：
+            1. 按价格带（低价格带、中低价格带、中高价格带、高价格带）汇总销量/毛利/复购率差异，指出表现最好与最差的价格带，并引用具体数据。
+            2. 按品类汇总，找出贡献最大的品类与相对弱势的品类，并引用具体数据。
+            3. 商品分层分类（综合销量、毛利、复购率、日均毛利额判断），分为四类：
+               明星商品（销量、毛利、复购均较突出）、潜力商品（复购或毛利较好但销量偏低）、
+               稳健商品（整体均衡）、风险商品（销量或复购明显偏低）。
+               给出每类商品数量与占比，以及每类 3-5 个代表商品ID。
+            4. 用一段「关键洞察」总结最重要的发现，供后续归因与策略使用。
+
+            输出要求：仅输出简体中文 Markdown，包含以下小节：
+            ## 销售总览
+            ## 价格带表现分析
+            ## 品类表现分析
+            ## 商品分层分类结果
+            ## 关键洞察
+            不要输出与上述无关的内容。
+        vision:
+          enabled: false
+          configs:
+            variable_selector: []
+        memory:
+          enabled: false
+          window:
+            enabled: false
+            size: 50
+        context:
+          enabled: false
+          variable_selector: []
+        structured_output:
+          enabled: false
+        retry_config:
+          enabled: false
+          max_retries: 1
+          retry_interval: 1000
+          exponential_backoff:
+            enabled: false
+            multiplier: 2
+            max_interval: 10000
+      height: 90
+      id: 'llm_sales'
+      position:
+        x: 1030
+        y: 300
+      positionAbsolute:
+        x: 1030
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: |-
+          def main(rows: list) -> dict:
+              from collections import Counter, defaultdict
+              n = len(rows)
+              if n == 0:
+                  return {"rules_text": "关联分析：清洗后无有效数据，无法生成关联规则。"}
+              avg_sale = sum(float(r.get("日销量") or 0) for r in rows) / n
+              avg_profit = sum(float(r.get("毛利") or 0) for r in rows) / n
+              avg_rebuy = sum(float(r.get("复购率") or 0) for r in rows) / n
+
+              baskets = []
+              for r in rows:
+                  items = set()
+                  items.add("品类=" + str(r.get("品类") or "未知"))
+                  items.add("价格带=" + str(r.get("价格带") or "其他价格带"))
+                  items.add("高销量" if float(r.get("日销量") or 0) >= avg_sale else "低销量")
+                  items.add("高毛利" if float(r.get("毛利") or 0) >= avg_profit else "低毛利")
+                  items.add("高复购" if float(r.get("复购率") or 0) >= avg_rebuy else "低复购")
+                  baskets.append(list(items))
+
+              sing = Counter()
+              pair = Counter()
+              for items in baskets:
+                  for it in set(items):
+                      sing[it] += 1
+                  for i in range(len(items)):
+                      for j in range(i + 1, len(items)):
+                          a, b = items[i], items[j]
+                          if a != b:
+                              key = (a, b) if a < b else (b, a)
+                              pair[key] += 1
+
+              min_sup = 0.05
+              min_conf = 0.3
+              rules = []
+              for (a, b), c in pair.items():
+                  if c < min_sup * n:
+                      continue
+                  for x, y in ((a, b), (b, a)):
+                      conf = c / sing[x] if sing[x] else 0
+                      if conf < min_conf:
+                          continue
+                      lift = (c * n) / (sing[x] * sing[y]) if sing[x] and sing[y] else 0
+                      if lift >= 1:
+                          rules.append((lift, conf, c / n, x, y))
+              rules.sort(key=lambda t: (-t[0], -t[1], -t[2]))
+              rules = rules[:20]
+
+              out = []
+              out.append("【关联规则】挖掘对象：品类×价格带×表现标签（高/低销量、高/低毛利、高/低复购，按整体均值分层）")
+              out.append("【关联规则】阈值：最小支持度≥%.2f；最小置信度≥%.2f；提升度≥1.00" % (min_sup, min_conf))
+              if rules:
+                  for i, (lift, conf, sup, x, y) in enumerate(rules, 1):
+                      out.append("%d. %s ⇒ %s（支持度=%.2f，置信度=%.2f，提升度=%.2f）" % (i, x, y, sup, conf, lift))
+              else:
+                  out.append("未发现满足阈值（支持度≥0.05且置信度≥0.3）的强关联规则。")
+
+              out.append("【价格带×高表现占比】(高销量/高毛利/高复购 = 不低于整体均值)")
+              bands = ["低价格带", "中低价格带", "中高价格带", "高价格带"]
+              for b in bands:
+                  sub = [r for r in rows if str(r.get("价格带")) == b]
+                  if not sub:
+                      continue
+                  hs = sum(1 for r in sub if float(r.get("日销量") or 0) >= avg_sale) / len(sub)
+                  hg = sum(1 for r in sub if float(r.get("毛利") or 0) >= avg_profit) / len(sub)
+                  hr = sum(1 for r in sub if float(r.get("复购率") or 0) >= avg_rebuy) / len(sub)
+                  out.append("- %s：商品数=%d，高销量占比=%.1f%%，高毛利占比=%.1f%%，高复购占比=%.1f%%" % (b, len(sub), hs * 100, hg * 100, hr * 100))
+
+              combo = defaultdict(list)
+              for r in rows:
+                  combo[(str(r.get("品类") or "未知"), str(r.get("价格带") or "其他价格带"))].append(r)
+              out.append("【品类×价格带组合TOP5】(按组合总销量)")
+              top = sorted(combo.items(), key=lambda kv: -sum(x.get("日销量") or 0 for x in kv[1]))[:5]
+              for (cat, b), rws in top:
+                  g = sum(x.get("日均毛利额") or 0 for x in rws)
+                  out.append("- %s × %s：商品数=%d，总销量=%d，平均日均毛利额=%s" % (
+                      cat, b, len(rws), sum(x.get("日销量") or 0 for x in rws), format(g / len(rws), ",.2f")))
+
+              return {"rules_text": "\n".join(out)}
+        code_language: python3
+        desc: 在品类×价格带×表现标签上挖掘关联规则（最小支持度0.05、最小置信度0.3）并输出价格带表现占比与组合排名。
+        outputs:
+          rules_text:
+            children: null
+            type: string
+        selected: false
+        title: 关联规则分析
+        type: code
+        variables:
+        - value_selector:
+          - 'code_clean'
+          - rows
+          variable: rows
+      height: 54
+      id: 'code_assoc'
+      position:
+        x: 1360
+        y: 300
+      positionAbsolute:
+        x: 1360
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 结合销售表现分析与关联规则，对高/低表现现象进行归因分析。
+        title: 归因分析
+        type: llm
+        model:
+          provider: tongyi
+          name: qwen-max
+          mode: chat
+          completion_params:
+            temperature: 0.3
+            max_tokens: 4096
+        prompt_template:
+        - role: system
+          text: 你是一名零售经营归因分析师。所有归因结论必须引用输入材料中的具体数字与规则，不得编造数据。请全程使用简体中文。
+        - role: user
+          text: |
+            请基于以下材料对商品数据表现差异进行归因分析：
+
+            【清洗后数据概览】
+            {{#code_clean.summary_text#}}
+
+            【销售表现与商品分层】
+            {{#llm_sales.text#}}
+
+            【关联规则与组合分析】
+            {{#code_assoc.rules_text#}}
+
+            归因要求：
+            1. 品类结构归因：解释高表现与低表现品类形成的原因，引用数据概览与销售分析中的数字。
+            2. 价格带结构归因：解释不同价格带在销量、毛利、复购率上的差异成因。
+            3. 复购与毛利/销量关系归因：解释潜力商品与风险商品现象背后的原因。
+            4. 关联关系解读：结合关联规则，解释品类、价格带与表现标签之间的联动关系及业务含义。
+            5. 归纳核心归因结论：不超过 5 条，每条 = 结论 + 数据依据 + 业务含义。
+
+            输出要求：仅输出简体中文 Markdown，包含以下小节：
+            ## 归因分析
+            ### 品类维度归因
+            ### 价格带维度归因
+            ### 复购与毛利维度归因
+            ### 关联关系解读
+            ### 核心归因结论（不超过5条）
+            不要输出与上述无关的内容。
+        vision:
+          enabled: false
+          configs:
+            variable_selector: []
+        memory:
+          enabled: false
+          window:
+            enabled: false
+            size: 50
+        context:
+          enabled: false
+          variable_selector: []
+        structured_output:
+          enabled: false
+        retry_config:
+          enabled: false
+          max_retries: 1
+          retry_interval: 1000
+          exponential_backoff:
+            enabled: false
+            multiplier: 2
+            max_interval: 10000
+      height: 90
+      id: 'llm_attribution'
+      position:
+        x: 1690
+        y: 300
+      positionAbsolute:
+        x: 1690
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 综合数据概览、销售分析、关联洞察与归因结论，输出可落地的经营策略建议报告。
+        title: 策略建议
+        type: llm
+        model:
+          provider: deepseek
+          name: deepseek-chat
+          mode: chat
+          completion_params:
+            temperature: 0.3
+            max_tokens: 4096
+        prompt_template:
+        - role: system
+          text: 你是一名资深零售/电商经营策略顾问。策略必须与数据一致、可落地，不得编造事实。请全程使用简体中文。
+        - role: user
+          text: |
+            请基于以下分析材料，制定商品经营策略建议报告：
+
+            【数据概览】
+            {{#code_clean.summary_text#}}
+
+            【销售表现与商品分层】
+            {{#llm_sales.text#}}
+
+            【关联洞察】
+            {{#code_assoc.rules_text#}}
+
+            【归因结论】
+            {{#llm_attribution.text#}}
+
+            输出要求：仅输出简体中文 Markdown 报告，包含以下小节：
+            ## 策略建议总览
+            （3-5 条一句话要点）
+            ## 商品结构与分层运营策略
+            （针对明星商品、潜力商品、稳健商品、风险商品分别给出动作）
+            ## 价格带与定价策略
+            ## 毛利与成本优化策略
+            ## 复购提升与用户运营策略
+            ## 关联组合与陈列促销建议
+            （必须引用关联规则中的具体规则作为依据）
+            ## 落地行动清单
+            （按优先级 高/中/低 输出可执行动作、适用对象、预期衡量指标）
+
+            禁止输出与上述无关的内容；所有策略建议须与输入数据一致。
+        vision:
+          enabled: false
+          configs:
+            variable_selector: []
+        memory:
+          enabled: false
+          window:
+            enabled: false
+            size: 50
+        context:
+          enabled: false
+          variable_selector: []
+        structured_output:
+          enabled: false
+        retry_config:
+          enabled: false
+          max_retries: 1
+          retry_interval: 1000
+          exponential_backoff:
+            enabled: false
+            multiplier: 2
+            max_interval: 10000
+      height: 90
+      id: 'llm_strategy'
+      position:
+        x: 2020
+        y: 300
+      positionAbsolute:
+        x: 2020
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 输出归因分析、关联洞察与最终策略建议报告。
+        outputs:
+        - value_selector:
+          - 'llm_strategy'
+          - text
+          value_type: string
+          variable: strategy_report
+        - value_selector:
+          - 'llm_attribution'
+          - text
+          value_type: string
+          variable: attribution_report
+        - value_selector:
+          - 'code_assoc'
+          - rules_text
+          value_type: string
+          variable: association_insight
+        selected: false
+        title: 结束
+        type: end
+      height: 90
+      id: 'end'
+      position:
+        x: 2350
+        y: 300
+      positionAbsolute:
+        x: 2350
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.8

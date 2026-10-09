@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>需求 PRD 自动生成</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🤖 需求 PRD 自动生成</h1>
+      <p class="subtitle">输入需求信息，自动完成拆解、补全、PRD 生成与自检，输出高质量 PRD 文档</p>
+    </header>
+
+    <div class="layout">
+      <main class="main">
+        <section class="card form-card">
+          <h2>输入需求信息</h2>
+          <form id="form">
+            <div class="field">
+              <label for="feature_name">功能名称 <span class="required">*</span></label>
+              <input id="feature_name" name="feature_name" type="text" maxlength="256"
+                     placeholder="这个功能具体做什么？面向哪些用户？（避免笼统口号）" required />
+            </div>
+
+            <div class="field">
+              <label for="user_scenario">用户场景描述 <span class="required">*</span></label>
+              <textarea id="user_scenario" name="user_scenario" rows="3"
+                        placeholder="谁在什么情况下使用？要完成什么具体任务？" required></textarea>
+            </div>
+
+            <div class="field">
+              <label for="core_pain_point">核心痛点 <span class="required">*</span></label>
+              <textarea id="core_pain_point" name="core_pain_point" rows="3"
+                        placeholder="现状存在什么具体问题？带来了什么损失？" required></textarea>
+            </div>
+
+            <div class="field">
+              <label for="mvp_scope">MVP 范围 <span class="required">*</span></label>
+              <textarea id="mvp_scope" name="mvp_scope" rows="3"
+                        placeholder="第一版具体包含哪些功能点？" required></textarea>
+            </div>
+
+            <div class="field">
+              <label for="non_functional_requirements">非功能要求 <span class="required">*</span></label>
+              <textarea id="non_functional_requirements" name="non_functional_requirements" rows="2"
+                        placeholder="性能 / 安全 / 合规等要求，如无特殊要求可填「无」" required></textarea>
+            </div>
+
+            <div class="actions">
+              <button type="submit" id="submitBtn" class="btn primary">生成 PRD</button>
+              <button type="button" id="resetBtn" class="btn ghost">清空</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card" id="progressCard" hidden>
+          <h2>生成进度</h2>
+          <ul id="progressList" class="progress-list"></ul>
+        </section>
+
+        <section class="card" id="resultCard" hidden>
+          <div class="result-header">
+            <h2>生成结果</h2>
+            <div class="result-actions">
+              <a id="downloadBtn" class="btn primary" href="#" download hidden>⬇ 下载 PRD</a>
+              <button id="copyBtn" class="btn ghost" type="button">复制内容</button>
+            </div>
+          </div>
+          <div id="resultMeta" class="result-meta"></div>
+          <pre id="resultContent" class="prd-content"></pre>
+        </section>
+      </main>
+
+      <aside class="sidebar">
+        <section class="card history-card">
+          <div class="history-header">
+            <h2>历史记录</h2>
+            <button id="refreshBtn" class="btn ghost small" type="button">刷新</button>
+          </div>
+          <ul id="historyList" class="history-list"></ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

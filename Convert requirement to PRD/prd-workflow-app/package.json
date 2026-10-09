@@ -1,0 +1,17 @@
+{
+  "name": "prd-workflow-app",
+  "version": "1.0.0",
+  "description": "需求 PRD 自动生成工作流 交互前端（Node.js + Express + SQLite）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

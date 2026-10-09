@@ -1,0 +1,368 @@
+app:
+  description: 对 AI 产品创意依次开展四层验证：场景适应性 -> 模型能力匹配 -> 业务价值 -> 决策报告，最终给出可执行的上线建议。
+  icon: 🧪
+  icon_background: '#F79009'
+  mode: workflow
+  name: AI 产品化四层验证
+kind: app
+version: 0.7.0
+dependencies: []
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+  graph:
+    edges:
+    - data:
+        sourceType: start
+        targetType: llm
+      id: start-to-scene_adaptation
+      source: start
+      sourceHandle: source
+      target: scene_adaptation
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: scene_adaptation-to-model_evaluation
+      source: scene_adaptation
+      sourceHandle: source
+      target: model_evaluation
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: model_evaluation-to-business_value
+      source: model_evaluation
+      sourceHandle: source
+      target: business_value
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: business_value-to-decision_report
+      source: business_value
+      sourceHandle: source
+      target: decision_report
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: end
+      id: decision_report-to-end
+      source: decision_report
+      sourceHandle: source
+      target: end
+      targetHandle: target
+      type: custom
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 产品创意描述
+          max_length: 20000
+          required: true
+          type: paragraph
+          variable: product_idea
+      height: 78
+      id: start
+      position:
+        x: 80
+        y: 260
+      positionAbsolute:
+        x: 80
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.2
+          mode: chat
+          name: qwen-max
+          provider: langgenius/qwen/qwen
+        prompt_template:
+        - role: system
+          text: |-
+            你是资深的 AI 产品架构师与场景分析师。你的任务是对用户提交的 AI 产品创意执行「第一层验证：场景适应性验证」，请输出结构化、可复用的结论。严禁编造输入中未出现的任何信息与数据；若输入信息不足，按用户消息中的「清晰度校验」要求处理，只输出澄清提示。
+        - role: user
+          text: |-
+            【第一步：输入清晰度校验（必须最先执行）】
+            先判断用户提交的「产品创意描述」是否清晰、具体、完整，足以支撑开展四层验证。
+            以下任一情况都视为「输入模糊」，必须判定为不合格：
+            - 描述笼统、口号化（例如「用AI帮人工作」「做个AI助手」「提升效率」等，没有说清具体做什么、给谁用、解决什么具体问题、替代什么现有方案）
+            - 缺少目标用户、核心场景、要解决的具体问题、现有替代方案等关键要素
+            - 整段输入没有可落地的具体功能点或业务形态
+
+            如果判定为「输入模糊」，立即停止，只输出下面这段固定提示（一字不差），不要输出任何其他内容：
+            ⚠️ 输入信息模糊，无法开展四层验证。请补充以下信息后重新输入：
+            1. 产品做什么：这个 AI 产品具体完成什么任务？（避免笼统口号）
+            2. 目标用户：谁在什么真实场景下使用？使用频率如何？
+            3. 核心痛点：现状存在什么具体问题？不解决的代价是什么？
+            4. 现有替代方案：用户现在如何完成该任务？现有工具/人工流程的主要痛点是什么？
+
+            【抗幻觉铁律（最高优先级）】
+            1. 只能使用用户输入中明确出现的信息，严禁编造、推测或脑补。
+            2. 禁止凭空生成任何具体数据：数字、百分比、金额、成本、市场规模、用户量、竞品名称、通过率、提升倍数、学习时长等。
+            3. 输入中未提供的细节一律标【待补充】或明确标注为「假设」，不得伪造数值。
+
+            【第二步：仅当输入清晰时才继续】
+            请完成场景适应性验证。
+
+            产品创意描述：
+            {{#start.product_idea#}}
+
+            请围绕以下维度展开分析：
+            1. 目标用户与核心场景：谁在什么真实场景下会使用，使用频率如何。
+            2. 场景刚需程度：是「止痛药」还是「维生素」，如果不解决该问题，用户的代价是什么。
+            3. 现状与替代方案：用户当前如何完成该任务，现有工具或人工流程的主要痛点。
+            4. 人机任务匹配度：哪些环节适合交给 AI，哪些环节必须保留人工兜底。
+            5. 采用阻力：使用习惯、信任、数据、合规等方面的主要障碍。
+
+            输出要求：
+            - 按上述维度分点给出结论，并标注证据或假设；
+            - 最后一行必须为：场景结论：[高度适配/部分适配/不适配]，理由一句话。
+        title: 场景适应性验证
+        type: llm
+        vision:
+          enabled: false
+      height: 122
+      id: scene_adaptation
+      position:
+        x: 420
+        y: 260
+      positionAbsolute:
+        x: 420
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - role: system
+          text: |-
+            你是 AI 模型评测与系统工程专家，负责对 AI 产品创意执行「第二层验证：模型能力与效果匹配验证」。请保持批判性思维，避免过度乐观。严禁编造输入中未出现的数字与结论；若输入信息不足，按用户消息中的「透传规则」处理，只输出澄清提示。
+        - role: user
+          text: |-
+            【透传规则】如果上面的「产品创意（原始输入）」或「第一层场景适应性结论」以「⚠️ 输入信息模糊」开头，说明输入信息不足，请原样输出这段澄清提示（一字不差），不要生成任何其他内容。
+
+            【抗幻觉铁律（最高优先级）】
+            1. 只能使用输入中明确出现的信息，严禁编造、推测或脑补。
+            2. 禁止凭空生成任何具体数据：数字、百分比、金额、成本、延迟、吞吐、通过率、评测指标等。
+            3. 输入中未提供的细节一律标【待补充】或明确标注为「假设」，不得伪造数值。
+
+            请完成模型层验证。
+
+            产品创意（原始输入）：
+            {{#start.product_idea#}}
+
+            第一层场景适应性结论：
+            {{#scene_adaptation.text#}}
+
+            请围绕以下维度展开分析：
+            1. 能力需求清单：按任务拆解所需的模型能力（语义理解、推理、长文生成、结构化输出、多模态等）。
+            2. 模型能力匹配：推荐模型族与规格，说明匹配度以及能力差距。
+            3. 质量与风险：幻觉、事实性、安全性、输出一致性方面的主要风险与缓解手段。
+            4. 成本与延迟：对单次调用成本、端到端延迟、并发吞吐的影响与优化建议。
+            5. 评测建议：给出上线前需要构建的关键评测集、指标与通过标准。
+
+            输出要求：
+            - 按上述维度分点给出结论，并标注证据或假设；
+            - 最后一行必须为：模型结论：[模型可支撑/模型需增强/模型暂不匹配]，理由一句话。
+        title: 模型能力匹配验证
+        type: llm
+        vision:
+          enabled: false
+      height: 146
+      id: model_evaluation
+      position:
+        x: 760
+        y: 260
+      positionAbsolute:
+        x: 760
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: qwen-max
+          provider: langgenius/qwen/qwen
+        prompt_template:
+        - role: system
+          text: |-
+            你是 AI 商业化与投资分析专家，负责对 AI 产品创意执行「第三层验证：业务价值验证」。请基于事实与合理假设给出可量化判断。严禁编造输入中未出现的数字、金额、市场规模与竞品信息；若输入信息不足，按用户消息中的「透传规则」处理，只输出澄清提示。
+        - role: user
+          text: |-
+            【透传规则】如果上面的「产品创意（原始输入）」或「第二层模型能力结论」以「⚠️ 输入信息模糊」开头，说明输入信息不足，请原样输出这段澄清提示（一字不差），不要生成任何其他内容。
+
+            【抗幻觉铁律（最高优先级）】
+            1. 只能使用输入中明确出现的信息，严禁编造、推测或脑补。
+            2. 禁止凭空生成任何具体数据：市场规模、金额、成本、LTV、ROI、付费率、竞品名称、市场份额等。
+            3. 输入中未提供的细节一律标【待补充】或明确标注为「假设」，不得伪造数值。
+
+            请完成业务价值验证。
+
+            产品创意（原始输入）：
+            {{#start.product_idea#}}
+
+            第二层模型能力结论：
+            {{#model_evaluation.text#}}
+
+            请围绕以下维度展开分析：
+            1. 市场规模与目标客群：可用市场空间（TAM/SAM/SOM）、目标客户画像与付费意愿。
+            2. 客户价值：相对现有方案的核心增益（降本/增效/体验），可用量化指标表达。
+            3. 商业模式：收费方式、定价锚点、获客渠道与生命周期价值（LTV）。
+            4. 成本结构：模型调用成本、人力、基础设施等，估算毛利空间。
+            5. 竞争与壁垒：主要竞品、差异化来源、数据/网络效应等护城河，以及 ROI 测算。
+
+            输出要求：
+            - 按上述维度分点给出结论，并区分「事实」与「假设」；
+            - 最后一行必须为：业务结论：[值得投入/谨慎投入/不值得投入]，理由一句话。
+        title: 业务价值验证
+        type: llm
+        vision:
+          enabled: false
+      height: 146
+      id: business_value
+      position:
+        x: 1100
+        y: 260
+      positionAbsolute:
+        x: 1100
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.4
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - role: system
+          text: |-
+            你是 AI 产品评审委员会主席，负责汇总四层验证结果并输出最终「决策报告」。报告须客观、克制，直接指导产品立项或调整。严禁编造任何输入中未出现的数字、通过率、预算、竞品名称、里程碑等；若输入信息不足，按用户消息中的「透传规则」处理，只输出澄清提示。
+        - role: user
+          text: |-
+            【透传规则】如果下面任一层的结论以「⚠️ 输入信息模糊」开头，说明输入信息不足，请原样输出这段澄清提示（一字不差），不要生成任何其他内容。
+
+            【抗幻觉铁律（最高优先级）】
+            1. 只能使用各层结论中明确出现的信息，严禁编造、推测或脑补。
+            2. 禁止凭空生成任何具体数据：通过率、预算、金额、里程碑数量、提升倍数、学习时长、付费率、竞品名称等。
+            3. 输入中未提供的细节一律标【待补充】或明确标注为「假设」，不得伪造数值。
+
+            请汇总以下四层验证结果，输出最终决策报告。
+
+            第一层·场景适应性结论：
+            {{#scene_adaptation.text#}}
+
+            第二层·模型能力匹配结论：
+            {{#model_evaluation.text#}}
+
+            第三层·业务价值结论：
+            {{#business_value.text#}}
+
+            请在报告中覆盖：
+            1. 总体结论：四层验证的通过率与总体可行性评级（推荐上线/小范围试点/暂缓/否决）。
+            2. 关键发现：每一层最值得关注的一个优势与一个风险。
+            3. 前提条件：必须满足才可推进的关键假设与验证动作（如评测通过标准、付费验证）。
+            4. 落地建议：给出可执行的下一步计划（MVP 范围、里程碑、资源与预算、风险预案）。
+
+            输出要求：
+            - 使用 Markdown 分节输出，正文不超过 800 字；
+            - 报告开头必须为：总体结论：[推荐上线/小范围试点/暂缓/否决]。
+        title: 四层验证决策报告
+        type: llm
+        vision:
+          enabled: false
+      height: 146
+      id: decision_report
+      position:
+        x: 1440
+        y: 260
+      positionAbsolute:
+        x: 1440
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - decision_report
+          - text
+          value_type: string
+          variable: final_report
+        selected: false
+        title: 结束
+        type: end
+      height: 78
+      id: end
+      position:
+        x: 1780
+        y: 260
+      positionAbsolute:
+        x: 1780
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 1

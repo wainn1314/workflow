@@ -1,0 +1,17 @@
+identity:
+  author: prd
+  name: text_to_file
+  label:
+    en_US: Text to File
+    zh_Hans: 文本转文件
+  description:
+    en_US: Convert text content into a downloadable file.
+    zh_Hans: 将文本内容转换为可下载的文件。
+  icon: icon.svg
+  tags:
+    - productivity
+tools:
+  - tools/text_to_file.yaml
+extra:
+  python:
+    source: provider/text_to_file.py

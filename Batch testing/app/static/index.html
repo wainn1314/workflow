@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 应用评测流水线</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>AI 应用评测流水线 <span class="badge">MVP</span></h1>
+  <div class="run-selector">
+    <label>当前评测：</label>
+    <select id="runSelect" onchange="onRunChange(this.value)"></select>
+    <button class="btn" onclick="refreshRuns()">刷新</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="run" onclick="switchTab('run')">运行评测</button>
+  <button class="tab" data-tab="report" onclick="switchTab('report')">评测报告</button>
+  <button class="tab" data-tab="review" onclick="switchTab('review')">BadCase 审核</button>
+  <button class="tab" data-tab="history" onclick="switchTab('history')">历史趋势</button>
+</nav>
+
+<main>
+  <!-- 运行评测 -->
+  <section id="tab-run" class="tab-panel active">
+    <div class="grid-2">
+      <div class="card">
+        <h2>被测模型配置</h2>
+        <div class="field"><label>API 地址 (Base URL)</label><input id="modelBaseUrl" placeholder="https://api.openai.com/v1"></div>
+        <div class="field"><label>模型名称</label><input id="modelName" placeholder="gpt-4o-mini"></div>
+        <div class="field"><label>API Key</label><input id="modelApiKey" type="password" placeholder="sk-..."></div>
+        <div class="field"><label>接口类型</label>
+          <select id="modelProvider">
+            <option value="">自动识别（默认）</option>
+            <option value="openai">OpenAI 兼容</option>
+            <option value="dify">Dify 应用（自动判别对话/工作流/文本生成）</option>
+            <option value="dify-chat">Dify 对话应用（/chat-messages）</option>
+            <option value="dify-workflow">Dify 工作流应用（/workflows/run）</option>
+            <option value="dify-completion">Dify 文本生成应用（/completion-messages）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>工作流输入变量（可选 JSON，留空则按 Start 变量自动映射）</label>
+          <textarea id="modelWorkflowInputs" rows="2" placeholder='例：{"topic": "$query", "difficulty": "medium"}；"$query" 代表用户原话'></textarea>
+        </div>
+        <div class="field"><label class="inline"><input type="checkbox" id="modelMock" checked> Mock 模式（无需真实 Key，用于演示）</label></div>
+      </div>
+      <div class="card">
+        <h2>裁判模型配置 (LLM-as-Judge)</h2>
+        <div class="field"><label>API 地址 (Base URL)</label><input id="judgeBaseUrl" placeholder="留空则与被测模型一致"></div>
+        <div class="field"><label>模型名称</label><input id="judgeName" placeholder="留空则与被测模型一致"></div>
+        <div class="field"><label>API Key</label><input id="judgeApiKey" type="password" placeholder="留空则与被测模型一致"></div>
+        <div class="field"><label>接口类型</label>
+          <select id="judgeProvider">
+            <option value="">自动识别（默认）</option>
+            <option value="openai">OpenAI 兼容</option>
+            <option value="dify">Dify 应用（自动判别对话/工作流/文本生成）</option>
+            <option value="dify-chat">Dify 对话应用（/chat-messages）</option>
+            <option value="dify-workflow">Dify 工作流应用（/workflows/run）</option>
+            <option value="dify-completion">Dify 文本生成应用（/completion-messages）</option>
+          </select>
+        </div>
+        <div class="field"><label class="inline"><input type="checkbox" id="judgeMock" checked> Mock 裁判（演示用）</label></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>运行参数 & 测试集</h2>
+      <div class="grid-3">
+        <div class="field"><label>并发数</label><input id="concurrency" type="number" value="5" min="1"></div>
+        <div class="field"><label>最大重试次数</label><input id="maxRetries" type="number" value="3" min="1"></div>
+        <div class="field"><label>超时（秒）</label><input id="timeout" type="number" value="120" min="10"></div>
+        <div class="field"><label>温度</label><input id="temperature" type="number" value="0" step="0.1"></div>
+        <div class="field"><label>裁判温度</label><input id="judgeTemperature" type="number" value="0" step="0.1"></div>
+        <div class="field"><label class="inline"><input type="checkbox" id="stream" checked> 流式（测量 TTFT）</label></div>
+      </div>
+      <p class="hint">
+        Dify 免费额度：知识库类应用（被测或裁判走检索）建议把并发降到 <b>1~2</b>，
+        否则容易触发 <code>knowledge base request rate limit</code>；
+        遇到限流/应用无产出的用例，评测器会自动以 20 秒冷却重试（可增大最大重试次数）。
+      </p>
+      <div class="field">
+        <label>测试集文件（Excel / CSV）</label>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+        <a href="/static/sample_testset.csv" class="link" download>下载示例测试集</a>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="startRun()">开始评测</button>
+        <button class="btn" onclick="cancelRun()">取消</button>
+        <button class="btn" onclick="resumeRun()">断点续跑</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>进度 & 实时日志</h2>
+      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+      <div id="progressText" class="progress-text">空闲</div>
+      <div id="logPanel" class="log-panel"></div>
+    </div>
+  </section>
+
+  <!-- 报告 -->
+  <section id="tab-report" class="tab-panel">
+    <div class="actions">
+      <button class="btn" onclick="exportCsv('results')">导出明细 CSV</button>
+      <button class="btn" onclick="exportCsv('summary')">导出汇总 CSV</button>
+      <button class="btn" onclick="exportCsv('scenario')">导出场景对比 CSV</button>
+      <button class="btn" onclick="exportCsv('difficulty')">导出难度对比 CSV</button>
+      <button class="btn" onclick="exportCsv('badcase')">导出 BadCase CSV</button>
+    </div>
+    <div id="summaryCards" class="cards"></div>
+    <div class="grid-2">
+      <div class="card"><h2>各维度平均分</h2><div class="chart-wrap"><canvas id="radarChart"></canvas></div><div id="dimTable"></div></div>
+      <div class="card"><h2>通过率对比（场景）</h2><div class="chart-wrap"><canvas id="passRateChart"></canvas></div></div>
+    </div>
+    <div class="card"><h2>按场景分组</h2><div id="scenarioTable"></div></div>
+    <div class="card"><h2>按难度分组</h2><div id="difficultyTable"></div></div>
+  </section>
+
+  <!-- 审核 -->
+  <section id="tab-review" class="tab-panel">
+    <div class="card"><h2>BadCase 审核面板</h2><div id="badcaseList" class="badcase-list"></div></div>
+  </section>
+
+  <!-- 历史 -->
+  <section id="tab-history" class="tab-panel">
+    <div class="card"><h2>历史评测趋势</h2><div class="chart-wrap tall"><canvas id="trendChart"></canvas></div></div>
+    <div class="card"><h2>历史记录</h2><div id="historyTable"></div></div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/static/vendor/chart.umd.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

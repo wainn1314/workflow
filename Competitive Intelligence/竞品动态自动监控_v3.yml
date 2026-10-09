@@ -1,0 +1,1476 @@
+app:
+  description: 批量监控竞品页面，对比昨日快照识别功能/定价变化，AI分析战略意图并推送飞书/钉钉/企微通知
+  icon: 📡
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: 竞品动态自动监控
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.16@6a3bfd05067f9a146457e882847673b53cc6681707a172f800ceed4070b231a7
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: JSONBin API Master Key，用于读写页面快照
+    id: env-jsonbin-api-key
+    name: JSONBIN_API_KEY
+    selector:
+    - env
+    - JSONBIN_API_KEY
+    value: ''
+    value_type: secret
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: 1900000000001-source-1900000000040-target
+      selected: false
+      source: '1900000000001'
+      sourceHandle: source
+      target: '1900000000040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1900000000040-source-1900000000002-target
+      selected: false
+      source: '1900000000040'
+      sourceHandle: source
+      target: '1900000000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: iteration
+        targetType: iteration-start
+      id: 1900000000002-loop-1900000000002start-target
+      selected: false
+      source: '1900000000002'
+      sourceHandle: loop
+      target: 1900000000002start
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: iteration-start
+        targetType: code
+      id: 1900000000002start-source-1900000000010-target
+      selected: false
+      source: 1900000000002start
+      sourceHandle: source
+      target: '1900000000010'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: http-request
+      id: 1900000000010-source-1900000000011-target
+      selected: false
+      source: '1900000000010'
+      sourceHandle: source
+      target: '1900000000011'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: http-request
+        targetType: if-else
+      id: 1900000000011-source-1900000000012-target
+      selected: false
+      source: '1900000000011'
+      sourceHandle: source
+      target: '1900000000012'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: if-else
+        targetType: code
+      id: 1900000000012-true-1900000000013-target
+      selected: false
+      source: '1900000000012'
+      sourceHandle: 'true'
+      target: '1900000000013'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: if-else
+        targetType: code
+      id: 1900000000012-false-1900000000021-target
+      selected: false
+      source: '1900000000012'
+      sourceHandle: 'false'
+      target: '1900000000021'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: code
+      id: 1900000000013-source-1900000000023-target
+      selected: false
+      source: '1900000000013'
+      sourceHandle: source
+      target: '1900000000023'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: http-request
+      id: 1900000000013-source-1900000000014-target
+      selected: false
+      source: '1900000000013'
+      sourceHandle: source
+      target: '1900000000014'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: if-else
+      id: 1900000000042-source-1900000000015-target
+      selected: false
+      source: '1900000000042'
+      sourceHandle: source
+      target: '1900000000015'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: if-else
+        targetType: llm
+      id: 1900000000015-true-1900000000016-target
+      selected: false
+      source: '1900000000015'
+      sourceHandle: 'true'
+      target: '1900000000016'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: if-else
+        targetType: http-request
+      id: 1900000000015-false-1900000000020-target
+      selected: false
+      source: '1900000000015'
+      sourceHandle: 'false'
+      target: '1900000000020'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: llm
+        targetType: http-request
+      id: 1900000000016-source-1900000000017-target
+      selected: false
+      source: '1900000000016'
+      sourceHandle: source
+      target: '1900000000017'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: http-request
+        targetType: code
+      id: 1900000000017-source-1900000000018-target
+      selected: false
+      source: '1900000000017'
+      sourceHandle: source
+      target: '1900000000018'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: http-request
+        targetType: code
+      id: 1900000000020-source-1900000000019-target
+      selected: false
+      source: '1900000000020'
+      sourceHandle: source
+      target: '1900000000019'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1900000000018-source-1900000000022-target
+      selected: false
+      source: '1900000000018'
+      sourceHandle: source
+      target: '1900000000022'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1900000000019-source-1900000000022-target
+      selected: false
+      source: '1900000000019'
+      sourceHandle: source
+      target: '1900000000022'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1900000000021-source-1900000000022-target
+      selected: false
+      source: '1900000000021'
+      sourceHandle: source
+      target: '1900000000022'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: iteration
+        targetType: code
+      id: 1900000000002-source-1900000000030-target
+      selected: false
+      source: '1900000000002'
+      sourceHandle: source
+      target: '1900000000030'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1900000000030-source-1900000000031-target
+      selected: false
+      source: '1900000000030'
+      sourceHandle: source
+      target: '1900000000031'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1900000000031-true-1900000000034-target
+      selected: false
+      source: '1900000000031'
+      sourceHandle: 'true'
+      target: '1900000000034'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1900000000034-source-1900000000032-target
+      selected: false
+      source: '1900000000034'
+      sourceHandle: source
+      target: '1900000000032'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1900000000031-false-1900000000033-target
+      selected: false
+      source: '1900000000031'
+      sourceHandle: 'false'
+      target: '1900000000033'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1900000000032-source-1900000000033-target
+      selected: false
+      source: '1900000000032'
+      sourceHandle: source
+      target: '1900000000033'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: http-request
+        targetType: code
+      id: 1900000000014-source-1900000000041-target
+      selected: false
+      source: '1900000000014'
+      sourceHandle: source
+      target: '1900000000041'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: code
+      id: 1900000000041-source-1900000000042-target
+      selected: false
+      source: '1900000000041'
+      sourceHandle: source
+      target: '1900000000042'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        sourceType: code
+        targetType: code
+      id: 1900000000023-source-1900000000042-target
+      selected: false
+      source: '1900000000023'
+      sourceHandle: source
+      target: '1900000000042'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - default: ''
+          hint: 粘贴 JSON 文本，需包含 urls 数组字段；示例：{"urls":["https://competitor.com/pricing","https://competitor.com/features"]}；也支持直接输入单个页面 URL
+          label: 需要监控的竞品页面URL列表
+          max_length: 10000
+          options: []
+          placeholder: '{"urls":["https://example.com/a","https://example.com/b"]}'
+          required: true
+          type: paragraph
+          variable: competitor_urls
+        - default: ''
+          hint: 支持飞书/钉钉/企微机器人 Webhook，有实质性变化时推送
+          label: 消息推送的webhook地址，支持飞书/钉钉/企微
+          max_length: 2048
+          options: []
+          placeholder: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+          required: false
+          type: text-input
+          variable: webhook_url
+      height: 134
+      id: '1900000000001'
+      position:
+        x: 0
+        y: 186.91666666666666
+      positionAbsolute:
+        x: 0
+        y: 186.91666666666666
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import json\n\ndef main(data) -> dict:\n    raw = None\n    if isinstance(data, dict):\n        competitor = data.get('competitor_urls', data)\n        raw = competitor.get('urls', competitor.get('url', []))\n    elif isinstance(data, str):\n        try:\n            obj = json.loads(data)\n            competitor = obj.get('competitor_urls', obj) if isinstance(obj, dict) else obj\n            raw = competitor.get('urls', competitor.get('url', [])) if isinstance(competitor, dict) else competitor\n        except Exception:\n            raw = [data]\n    if not isinstance(raw, list):\n        raw = [raw] if raw else []\n    cleaned = []\n    seen = set()\n    for u in raw:\n        s = str(u).strip()\n        while s and s[0] in (chr(34), chr(39)) and s[-1] in (chr(34), chr(39)):\n            s = s[1:-1].strip()\n        if s.startswith(('http://', 'https://')) and s not in seen:\n            seen.add(s)\n            cleaned.append(s)\n    return {'url_list': cleaned}"
+        code_language: python3
+        desc: 从开始节点 competitor_urls 对象中提取 urls 数组，供迭代节点使用
+        outputs:
+          url_list:
+            children: null
+            type: array[string]
+        selected: false
+        title: 提取URL数组
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000001'
+          - competitor_urls
+          value_type: string
+          variable: data
+      height: 95
+      id: '1900000000040'
+      position:
+        x: 342
+        y: 228.75
+      positionAbsolute:
+        x: 342
+        y: 228.75
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 遍历每个竞品 URL，抓取、对比、分析
+        error_handle_mode: continue-on-error
+        flatten_output: true
+        height: 584.1666666666666
+        is_parallel: false
+        iterator_input_type: array[string]
+        iterator_selector:
+        - '1900000000040'
+        - url_list
+        output_selector:
+        - '1900000000022'
+        - output
+        output_type: array[string]
+        parallel_nums: 1
+        selected: false
+        start_node_id: 1900000000002start
+        title: 迭代监控竞品
+        type: iteration
+        width: 3766
+      height: 584
+      id: '1900000000002'
+      position:
+        x: 684
+        y: 0
+      positionAbsolute:
+        x: 684
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 3766
+      zIndex: 0
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1900000000002start
+      parentId: '1900000000002'
+      position:
+        x: 60
+        y: 165.45
+      positionAbsolute:
+        x: 744
+        y: 165.45
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1001
+    - data:
+        code: "import hashlib\n\ndef main(url: str) -> dict:\n    raw = str(url or \"\").strip()\n    url_md5 = hashlib.md5(raw.encode(\"utf-8\")).hexdigest()\n    low = raw.lower()\n    if low.startswith((\"http://\", \"https://\")):\n        fetch_url = raw\n        url_valid = \"yes\"\n    elif raw:\n        # 缺少协议头时补全 https://，保证 HTTP 节点不会收到不带协议的串\n        fetch_url = \"https://\" + raw\n        url_valid = \"no-scheme\"\n    else:\n        # 空 item 时使用可访问的占位页（httpstat.us/204 稳定返回 204），\n        # 使流程走 0012=false -> 0021 异常处理，而不是让 HTTP 节点抛 scheme 错误\n        fetch_url = \"https://httpstat.us/204\"\n        url_valid = \"empty\"\n    return {\"url_md5\": url_md5, \"url\": raw, \"fetch_url\": fetch_url, \"url_valid\": url_valid}\n"
+        code_language: python3
+        desc: 计算 URL 的 MD5 作为快照存储 key
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          url:
+            children: null
+            type: string
+          url_md5:
+            children: null
+            type: string
+          fetch_url:
+            children: null
+            type: string
+          url_valid:
+            children: null
+            type: string
+        selected: false
+        title: 计算URL MD5
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000002'
+          - item
+          value_type: string
+          variable: url
+      height: 79
+      id: '1900000000010'
+      parentId: '1900000000002'
+      position:
+        x: 184
+        y: 157.95
+      positionAbsolute:
+        x: 868
+        y: 157.95
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        desc: GET 抓取竞品页面 HTML
+        headers: 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+          Accept: text/html,application/xhtml+xml'
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 30
+          max_read_timeout: 30
+          max_write_timeout: 30
+          read: 30
+          write: 30
+        title: 抓取页面内容
+        type: http-request
+        url: '{{#1900000000010.fetch_url#}}'
+        variables: []
+      height: 121
+      id: '1900000000011'
+      parentId: '1900000000002'
+      position:
+        x: 506
+        y: 150.11666666666665
+      positionAbsolute:
+        x: 1190
+        y: 150.11666666666665
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: '='
+            id: cond-status-200
+            value: '200'
+            varType: number
+            variable_selector:
+            - '1900000000011'
+            - status_code
+          id: 'true'
+          logical_operator: and
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        selected: false
+        title: 抓取是否成功
+        type: if-else
+      height: 147
+      id: '1900000000012'
+      parentId: '1900000000002'
+      position:
+        x: 828
+        y: 157.2833333333333
+      positionAbsolute:
+        x: 1512
+        y: 157.2833333333333
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "import re\n\ndef main(html_content: str) -> dict:\n    text = html_content or \"\"\n    text = re.sub(r\"(?is)<script[^>]*>.*?</script>\", \" \", text)\n    text = re.sub(r\"(?is)<style[^>]*>.*?</style>\", \" \", text)\n    text = re.sub(r\"(?is)<noscript[^>]*>.*?</noscript>\", \" \", text)\n    text = re.sub(r\"(?i)<!--.*?-->\", \" \", text)\n    text = re.sub(r\"<[^>]+>\", \" \", text)\n    text = re.sub(r\"(?i)(cookie|privacy policy|隐私政策|隐私声明|cookie settings).{0,80}\", \" \", text)\n    text = re.sub(r\"&nbsp;|&amp;|&lt;|&gt;|&quot;|&#\\d+;\", \" \", text)\n    text = re.sub(r\"\\s+\", \" \", text).strip()\n    if len(text) > 8000:\n        text = text[:8000]\n    return {\"cleaned_text\": text}\n"
+        code_language: python3
+        desc: 去除 script/style/HTML 标签与无关文本
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          cleaned_text:
+            children: null
+            type: string
+        selected: false
+        title: 清洗HTML内容
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000011'
+          - body
+          value_type: string
+          variable: html_content
+      height: 79
+      id: '1900000000013'
+      parentId: '1900000000002'
+      position:
+        x: 1170
+        y: 113.64999999999995
+      positionAbsolute:
+        x: 1854
+        y: 113.64999999999995
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "import json\n\ndef main(url: str, content: str) -> dict:\n    payload = json.dumps({\"url\": url or \"\", \"content\": content or \"\"}, ensure_ascii=False)\n    return {\"snapshot_payload\": payload}\n"
+        code_language: python3
+        desc: 构造可安全写入的 JSON 快照正文
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          snapshot_payload:
+            children: null
+            type: string
+        selected: false
+        title: 构造快照Payload
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000010'
+          - url
+          value_type: string
+          variable: url
+        - value_selector:
+          - '1900000000013'
+          - cleaned_text
+          value_type: string
+          variable: content
+      height: 79
+      id: '1900000000023'
+      parentId: '1900000000002'
+      position:
+        x: 1492
+        y: 126.8166666666666
+      positionAbsolute:
+        x: 2176
+        y: 126.8166666666666
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        desc: 从 JSONBin 读取全部竞品 URL 的快照 Map
+        headers: 'Content-Type: application/json
+
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+          X-Master-Key: {{#env.JSONBIN_API_KEY#}}
+
+          X-Bin-Meta: false'
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 30
+          max_read_timeout: 30
+          max_write_timeout: 30
+          read: 30
+          write: 30
+        title: 读取快照Map
+        type: http-request
+        url: https://api.jsonbin.io/v3/b/6a9bb95ef5f4af5e296cdd93/latest
+        variables: []
+      height: 153
+      id: '1900000000014'
+      parentId: '1900000000002'
+      position:
+        x: 1814
+        y: 102.98333333333329
+      positionAbsolute:
+        x: 2498
+        y: 102.98333333333329
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: not empty
+            id: cond-yesterday-not-empty
+            value: ''
+            varType: string
+            variable_selector:
+            - '1900000000041'
+            - yesterday_content
+          id: 'true'
+          logical_operator: and
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        selected: false
+        title: 是否有昨日快照
+        type: if-else
+        desc: 该 URL 已有历史快照则交给 LLM 对比，否则走首次存储
+      height: 173
+      id: '1900000000015'
+      parentId: '1900000000002'
+      position:
+        x: 2136
+        y: 118.48333333333329
+      positionAbsolute:
+        x: 2820
+        y: 118.48333333333329
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对比昨日与今日内容，分析变化与战略意图
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: llm-sys-competitor-analyze
+          role: system
+          text: '你是一位资深竞品分析师。请对比以下两份竞品页面内容，完成分析：
+
+
+            昨日内容：
+
+            {{#1900000000041.yesterday_content#}}
+
+
+            今日内容：
+
+            {{#1900000000013.cleaned_text#}}
+
+
+            请按以下格式输出：
+
+
+            ## 变化摘要
+
+            - 变化类型：[新功能上线 / 功能修改 / 功能下线 / 定价调整 / 文案更新 / 无变化]
+
+            - 监控页面：{{#1900000000002.item#}}
+
+
+            ## 详细变化
+
+
+            | 变化模块 | 变化前 | 变化后 | 变化性质 |
+
+
+            ## 意图分析
+
+            （从竞品战略角度分析：为什么做这个变化？对我们有什么影响？）
+
+
+            ## 建议行动
+
+            （我们是否需要跟进？优先级如何？）
+
+
+            如果没有任何变化，仅输出"今日无变化"。'
+        - id: llm-user-competitor-analyze
+          role: user
+          text: 请开始对比分析，严格按指定格式输出。
+        selected: false
+        structured_output_enabled: false
+        title: 竞品变化分析
+        type: llm
+        vision:
+          enabled: false
+      height: 131
+      id: '1900000000016'
+      parentId: '1900000000002'
+      position:
+        x: 2478
+        y: 60
+      positionAbsolute:
+        x: 3162
+        y: 60
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: store-body-1
+            key: ''
+            type: text
+            value: '{{#1900000000042.merged_map_json#}}'
+          type: raw-text
+        desc: PUT 将合并后的快照 Map 写回 JSONBin
+        headers: 'Content-Type: application/json
+
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+          X-Master-Key: {{#env.JSONBIN_API_KEY#}}'
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        method: put
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 30
+          max_read_timeout: 30
+          max_write_timeout: 30
+          read: 30
+          write: 30
+        title: 更新今日快照
+        type: http-request
+        url: https://api.jsonbin.io/v3/b/6a9bb95ef5f4af5e296cdd93
+        variables: []
+      height: 167
+      id: '1900000000017'
+      parentId: '1900000000002'
+      position:
+        x: 2800
+        y: 63.83333333333337
+      positionAbsolute:
+        x: 3484
+        y: 63.83333333333337
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "def main(analysis: str, url: str) -> dict:\n    text = (analysis or \"\").strip()\n    if not text:\n        text = \"今日无变化\"\n    return {\"result\": f\"【{url}】\\n{text}\"}\n"
+        code_language: python3
+        desc: 整理 LLM 分析结果为统一输出
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: 输出分析结果
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000016'
+          - text
+          value_type: string
+          variable: analysis
+        - value_selector:
+          - '1900000000002'
+          - item
+          value_type: string
+          variable: url
+      height: 79
+      id: '1900000000018'
+      parentId: '1900000000002'
+      position:
+        x: 3122
+        y: 135.66666666666669
+      positionAbsolute:
+        x: 3806
+        y: 135.66666666666669
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "def main(url: str) -> dict:\n    return {\"result\": f\"首次运行，已存储今日快照：{url}\"}\n"
+        code_language: python3
+        desc: 首次监控提示
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: 首次运行提示
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000002'
+          - item
+          value_type: string
+          variable: url
+      height: 79
+      id: '1900000000019'
+      parentId: '1900000000002'
+      position:
+        x: 3122
+        y: 362.66666666666663
+      positionAbsolute:
+        x: 3806
+        y: 362.66666666666663
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: first-store-body-1
+            key: ''
+            type: text
+            value: '{{#1900000000042.merged_map_json#}}'
+          type: raw-text
+        desc: 首次捕获：把该 URL 今日快照并入 Map 后 PUT 写回 JSONBin
+        headers: 'Content-Type: application/json
+
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+          X-Master-Key: {{#env.JSONBIN_API_KEY#}}'
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        method: put
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 30
+          max_read_timeout: 30
+          max_write_timeout: 30
+          read: 30
+          write: 30
+        title: 存储首次快照
+        type: http-request
+        url: https://api.jsonbin.io/v3/b/6a9bb95ef5f4af5e296cdd93
+        variables: []
+      height: 167
+      id: '1900000000020'
+      parentId: '1900000000002'
+      position:
+        x: 2800
+        y: 289.09223220674113
+      positionAbsolute:
+        x: 3484
+        y: 289.09223220674113
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "def main(url: str, status) -> dict:\n    return {\"result\": f\"⚠️ 抓取失败：{url}，状态码：{status}\"}\n"
+        code_language: python3
+        desc: 抓取失败告警
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: 异常处理
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000002'
+          - item
+          value_type: string
+          variable: url
+        - value_selector:
+          - '1900000000011'
+          - status_code
+          value_type: number
+          variable: status
+      height: 79
+      id: '1900000000021'
+      parentId: '1900000000002'
+      position:
+        x: 2136
+        y: 445.16666666666663
+      positionAbsolute:
+        x: 2820
+        y: 445.16666666666663
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        advanced_settings:
+          group_enabled: false
+          groups: []
+        desc: 合并分析/首次运行/异常三条分支结果
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        output_type: string
+        selected: false
+        title: 变量聚合
+        type: variable-aggregator
+        variables:
+        - - '1900000000018'
+          - result
+        - - '1900000000019'
+          - result
+        - - '1900000000021'
+          - result
+      height: 188
+      id: '1900000000022'
+      parentId: '1900000000002'
+      position:
+        x: 3464
+        y: 279.25
+      positionAbsolute:
+        x: 4148
+        y: 279.25
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "def main(results: list) -> dict:\n    items = results or []\n    if not items:\n        return {\"report\": \"本次监控无结果\"}\n    parts = []\n    for i, item in enumerate(items, 1):\n        text = item if isinstance(item, str) else str(item)\n        parts.append(f\"## 竞品页面 {i}\\n{text}\")\n    report = \"# 竞品动态监控简报\\n\\n\" + \"\\n\\n\".join(parts)\n    return {\"report\": report}\n"
+        code_language: python3
+        desc: 将各页面分析结果汇总为完整简报
+        outputs:
+          report:
+            children: null
+            type: string
+        selected: false
+        title: 汇总简报
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000002'
+          - output
+          value_type: array[string]
+          variable: results
+      height: 79
+      id: '1900000000030'
+      position:
+        x: 4550
+        y: 349.9444444444444
+      positionAbsolute:
+        x: 4550
+        y: 349.9444444444444
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: cond-has-change-type
+            value: 变化类型
+            varType: string
+            variable_selector:
+            - '1900000000030'
+            - report
+          - comparison_operator: start with
+            id: cond-webhook-starts-http
+            value: http
+            varType: string
+            variable_selector:
+            - '1900000000001'
+            - webhook_url
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 是否有实质性变化
+        type: if-else
+      height: 173
+      id: '1900000000031'
+      position:
+        x: 4892
+        y: 316.1111111111111
+      positionAbsolute:
+        x: 4892
+        y: 316.1111111111111
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import json\n\ndef main(report: str) -> dict:\n    text = report or \"\"\n    # 兼容飞书 msg_type + 钉钉/企微 msgtype\n    payload = {\n        \"msg_type\": \"text\",\n        \"msgtype\": \"text\",\n        \"content\": {\"text\": text},\n        \"text\": {\"content\": text},\n    }\n    return {\"webhook_body\": json.dumps(payload, ensure_ascii=False)}\n"
+        code_language: python3
+        desc: 构造飞书/钉钉/企微兼容消息体
+        outputs:
+          webhook_body:
+            children: null
+            type: string
+        selected: false
+        title: 构造推送消息
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000030'
+          - report
+          value_type: string
+          variable: report
+      height: 79
+      id: '1900000000034'
+      position:
+        x: 5254
+        y: 328.37777777777774
+      positionAbsolute:
+        x: 5254
+        y: 328.37777777777774
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: webhook-body-1
+            key: ''
+            type: text
+            value: '{{#1900000000034.webhook_body#}}'
+          type: raw-text
+        desc: POST 推送到飞书/钉钉/企微 Webhook
+        headers: 'Content-Type: application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 30
+          max_read_timeout: 30
+          max_write_timeout: 30
+          read: 30
+          write: 30
+        title: 推送Webhook消息
+        type: http-request
+        url: '{{#1900000000001.webhook_url#}}'
+        variables: []
+      height: 151
+      id: '1900000000032'
+      position:
+        x: 5596
+        y: 305.54444444444437
+      positionAbsolute:
+        x: 5596
+        y: 305.54444444444437
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1900000000030'
+          - report
+          value_type: string
+          variable: monitor_report
+        selected: false
+        title: 结束
+        type: end
+      height: 88
+      id: '1900000000033'
+      position:
+        x: 5958
+        y: 412.37777777777774
+      positionAbsolute:
+        x: 5958
+        y: 412.37777777777774
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import json\n\ndef main(snapshot_map_json: str, url_md5: str) -> dict:\n    try:\n        data = json.loads(snapshot_map_json) if snapshot_map_json else {}\n    except Exception:\n        data = {}\n    if not isinstance(data, dict):\n        data = {}\n    entry = data.get(url_md5) or {}\n    if not isinstance(entry, dict):\n        entry = {}\n    return {\n        \"yesterday_content\": str(entry.get(\"content\") or \"\"),\n        \"snapshot_map_json\": json.dumps(data, ensure_ascii=False),\n    }\n"
+        code_language: python3
+        desc: 解析快照 Map，取出该 URL 昨日内容与完整 Map
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          snapshot_map_json:
+            children: null
+            type: string
+          yesterday_content:
+            children: null
+            type: string
+        selected: false
+        title: 解析昨日快照
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000014'
+          - body
+          value_type: string
+          variable: snapshot_map_json
+        - value_selector:
+          - '1900000000010'
+          - url_md5
+          value_type: string
+          variable: url_md5
+      height: 79
+      id: '1900000000041'
+      parentId: '1900000000002'
+      position:
+        x: 2050
+        y: 300.0
+      positionAbsolute:
+        x: 2734
+        y: 300.0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        code: "import json\n\ndef main(snapshot_map_json: str, snapshot_payload: str, url_md5: str) -> dict:\n    try:\n        data = json.loads(snapshot_map_json) if snapshot_map_json else {}\n    except Exception:\n        data = {}\n    if not isinstance(data, dict):\n        data = {}\n    # 仅保留 32 位 md5 键，丢弃占位/异常键\n    data = {k: v for k, v in data.items() if isinstance(k, str) and len(k) == 32}\n    try:\n        entry = json.loads(snapshot_payload) if snapshot_payload else {}\n    except Exception:\n        entry = {}\n    if not isinstance(entry, dict):\n        entry = {}\n    data[url_md5] = entry\n    return {\"merged_map_json\": json.dumps(data, ensure_ascii=False)}\n"
+        code_language: python3
+        desc: 把该 URL 今日快照合并进快照 Map，供 PUT 回写
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1900000000002'
+        outputs:
+          merged_map_json:
+            children: null
+            type: string
+        selected: false
+        title: 合并今日快照
+        type: code
+        variables:
+        - value_selector:
+          - '1900000000041'
+          - snapshot_map_json
+          value_type: string
+          variable: snapshot_map_json
+        - value_selector:
+          - '1900000000023'
+          - snapshot_payload
+          value_type: string
+          variable: snapshot_payload
+        - value_selector:
+          - '1900000000010'
+          - url_md5
+          value_type: string
+          variable: url_md5
+      height: 79
+      id: '1900000000042'
+      parentId: '1900000000002'
+      position:
+        x: 2350
+        y: 300.0
+      positionAbsolute:
+        x: 3034
+        y: 300.0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    viewport:
+      x: -1708.4686500134894
+      y: 209.87979870473202
+      zoom: 0.5743491774985178
+  rag_pipeline_variables: []

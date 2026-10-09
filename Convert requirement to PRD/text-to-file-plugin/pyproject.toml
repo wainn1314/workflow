@@ -1,0 +1,9 @@
+[project]
+name = "text-to-file"
+version = "0.0.1"
+description = "Convert text content into a downloadable file"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dify_plugin>=0.1.0",
+]

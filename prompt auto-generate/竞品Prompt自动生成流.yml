@@ -1,0 +1,2012 @@
+app:
+  description: 根据产品名称与功能描述，自动匹配 Prompt 模版，生成可直接交给 AI 编程工具（vibe coding）使用的产品开发 Prompt。
+  icon: 📝
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: advanced-chat
+  name: 竞品Prompt自动生成流
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.16@6a3bfd05067f9a146457e882847673b53cc6681707a172f800ceed4070b231a7
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables:
+  - description: LLM① 竞品分析 JSON 文本
+    id: cb59834d-1ef5-4efe-8486-91b985c08486
+    name: analysis_report
+    selector:
+    - conversation
+    - analysis_report
+    value: ''
+    value_type: string
+  - description: 知识检索得到的模版正文
+    id: ee953eed-9e58-4216-832c-44432fba04c0
+    name: template_content
+    selector:
+    - conversation
+    - template_content
+    value: ''
+    value_type: string
+  - description: 当前完整 Prompt（组装/优化后）
+    id: 00bc451d-4577-4a95-8a5f-3db8fdae9921
+    name: current_prompt
+    selector:
+    - conversation
+    - current_prompt
+    value: ''
+    value_type: string
+  environment_variables:
+  - description: T1 知识检索查询词
+    id: 88096dd7-b21f-4da2-9201-422085b258dc
+    name: QUERY_T1
+    selector:
+    - env
+    - QUERY_T1
+    value: 智能客服 Prompt 模版
+    value_type: string
+  - description: T2 知识检索查询词
+    id: 25cbcdbb-37da-4c54-a97b-e73a57c1282f
+    name: QUERY_T2
+    selector:
+    - env
+    - QUERY_T2
+    value: 营销文案 Prompt 模版
+    value_type: string
+  - description: T3 知识检索查询词
+    id: cf5500db-4f53-4125-b60c-7ac6ae09092f
+    name: QUERY_T3
+    selector:
+    - env
+    - QUERY_T3
+    value: 数据分析 Prompt 模版
+    value_type: string
+  - description: T4 知识检索查询词
+    id: 1502e823-f432-454b-bae2-fffa618f79e5
+    name: QUERY_T4
+    selector:
+    - env
+    - QUERY_T4
+    value: 内容创作 Prompt 模版
+    value_type: string
+  - description: T5 知识检索查询词
+    id: 5d7796a4-df9a-4c39-89aa-aaf4b6bb22cd
+    name: QUERY_T5
+    selector:
+    - env
+    - QUERY_T5
+    value: 代码助手 Prompt 模版
+    value_type: string
+  - description: T6 知识检索查询词
+    id: a9eb6138-cdea-4a18-a8dc-72b7fe792aa7
+    name: QUERY_T6
+    selector:
+    - env
+    - QUERY_T6
+    value: 角色扮演 Prompt 模版
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .md
+      - .txt
+      - .pdf
+      - .docx
+      allowed_file_types:
+      - document
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: true
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: 你好！请上传 PRD 文档（.md/.txt/.pdf/.docx），或直接发送「产品名称 + 功能描述」。我会先对 PRD 进行清洗与摘要，再匹配 Prompt 模版，为你生成一份可直接交给 AI 编程工具（vibe coding）使用的产品开发 Prompt。你可以继续补充技术规格、Dify 版本、大模型、交付物格式或新增功能（例如「结束聊天时选颜色→生成情绪胶囊→保存→列表展示」），我会把它们融入 Prompt，而不是直接生成 YML/Chatflow 配置。满意后回复「可以了」结束。
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - 竞品：某某智能客服，支持多轮 FAQ 自动回复与工单转接
+    - 竞品：某某营销助手，擅长小红书种草文案与活动话术
+    - 语气再专业一点，并加一条价格相关约束
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 866c0a68-42dc-492b-9b5f-a95ae0e38405-source-7b8d2de4-5937-4c47-b793-72037c052353-target
+      selected: false
+      source: 866c0a68-42dc-492b-9b5f-a95ae0e38405
+      sourceHandle: source
+      target: 7b8d2de4-5937-4c47-b793-72037c052353
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 7b8d2de4-5937-4c47-b793-72037c052353-true-1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d-target
+      selected: false
+      source: 7b8d2de4-5937-4c47-b793-72037c052353
+      sourceHandle: 'true'
+      target: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: question-classifier
+      id: 7b8d2de4-5937-4c47-b793-72037c052353-false-cd13786b-5ce4-472a-b7a4-3c8a1095f60d-target
+      selected: false
+      source: 7b8d2de4-5937-4c47-b793-72037c052353
+      sourceHandle: source
+      target: cd13786b-5ce4-472a-b7a4-3c8a1095f60d
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: dacb1fdb-e831-4a27-bd93-b49f8432260f-source-c9797b16-8ae9-456b-a89d-334f103fef58-target
+      selected: false
+      source: dacb1fdb-e831-4a27-bd93-b49f8432260f
+      sourceHandle: source
+      target: c9797b16-8ae9-456b-a89d-334f103fef58
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-bc880779-17ae-4cea-9f9f-529a63f66360-1cfecc1f-af00-4366-b835-5022da034ca6-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: bc880779-17ae-4cea-9f9f-529a63f66360
+      target: 1cfecc1f-af00-4366-b835-5022da034ca6
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-cd8f2d96-cec7-44b1-a437-4f47de3a2237-8a8e7656-4eac-45f2-8d80-c197440872c7-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: cd8f2d96-cec7-44b1-a437-4f47de3a2237
+      target: 8a8e7656-4eac-45f2-8d80-c197440872c7
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-284f5ac0-51ea-4195-b44b-7c9df4be442a-6e649d4c-6d0b-4713-9581-392bc87e7361-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 284f5ac0-51ea-4195-b44b-7c9df4be442a
+      target: 6e649d4c-6d0b-4713-9581-392bc87e7361
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-59c1ea29-c904-480d-9165-75eb2646b9ba-4a5eb985-3ee9-4c40-a980-e01d117112c8-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 59c1ea29-c904-480d-9165-75eb2646b9ba
+      target: 4a5eb985-3ee9-4c40-a980-e01d117112c8
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-190c3dab-181a-4336-a7a8-d84a4841614f-69b7268a-b81b-4383-8420-9aaa6b8494d2-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 190c3dab-181a-4336-a7a8-d84a4841614f
+      target: 69b7268a-b81b-4383-8420-9aaa6b8494d2
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-false-24f494f7-6cf2-402e-bc32-0e2874313d13-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: source
+      target: 24f494f7-6cf2-402e-bc32-0e2874313d13
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 24f494f7-6cf2-402e-bc32-0e2874313d13-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 24f494f7-6cf2-402e-bc32-0e2874313d13
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1cfecc1f-af00-4366-b835-5022da034ca6-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 1cfecc1f-af00-4366-b835-5022da034ca6
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 8a8e7656-4eac-45f2-8d80-c197440872c7-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 8a8e7656-4eac-45f2-8d80-c197440872c7
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 6e649d4c-6d0b-4713-9581-392bc87e7361-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 6e649d4c-6d0b-4713-9581-392bc87e7361
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 4a5eb985-3ee9-4c40-a980-e01d117112c8-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 4a5eb985-3ee9-4c40-a980-e01d117112c8
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 69b7268a-b81b-4383-8420-9aaa6b8494d2-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: 69b7268a-b81b-4383-8420-9aaa6b8494d2
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: affd5965-35f6-4ae2-88b3-265ffe344c91-source-4e20fcaf-7fd8-416e-b735-20f6c6c41d19-target
+      selected: false
+      source: affd5965-35f6-4ae2-88b3-265ffe344c91
+      sourceHandle: source
+      target: 4e20fcaf-7fd8-416e-b735-20f6c6c41d19
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 4e20fcaf-7fd8-416e-b735-20f6c6c41d19-source-c50893c3-d192-4791-9e49-21327c959d88-target
+      selected: false
+      source: 4e20fcaf-7fd8-416e-b735-20f6c6c41d19
+      sourceHandle: source
+      target: c50893c3-d192-4791-9e49-21327c959d88
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: llm
+      id: c50893c3-d192-4791-9e49-21327c959d88-source-25c59faf-65cb-417d-8224-ecee7abb2d1b-target
+      selected: false
+      source: c50893c3-d192-4791-9e49-21327c959d88
+      sourceHandle: source
+      target: 25c59faf-65cb-417d-8224-ecee7abb2d1b
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 25c59faf-65cb-417d-8224-ecee7abb2d1b-source-3b1e7295-39a0-4287-9d11-5d2fa6138044-target
+      selected: false
+      source: 25c59faf-65cb-417d-8224-ecee7abb2d1b
+      sourceHandle: source
+      target: 3b1e7295-39a0-4287-9d11-5d2fa6138044
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 3b1e7295-39a0-4287-9d11-5d2fa6138044-source-11fda064-efe3-4fe5-ad21-f8358b465ac6-target
+      selected: false
+      source: 3b1e7295-39a0-4287-9d11-5d2fa6138044
+      sourceHandle: source
+      target: 11fda064-efe3-4fe5-ad21-f8358b465ac6
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 11fda064-efe3-4fe5-ad21-f8358b465ac6-source-8f759ea5-d5f8-4abc-a915-b70743c06b6f-target
+      selected: false
+      source: 11fda064-efe3-4fe5-ad21-f8358b465ac6
+      sourceHandle: source
+      target: 8f759ea5-d5f8-4abc-a915-b70743c06b6f
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 8f759ea5-d5f8-4abc-a915-b70743c06b6f-source-5159a589-e1e8-4fbf-9a43-7a7c170e7f0b-target
+      selected: false
+      source: 8f759ea5-d5f8-4abc-a915-b70743c06b6f
+      sourceHandle: source
+      target: 5159a589-e1e8-4fbf-9a43-7a7c170e7f0b
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: llm
+      id: cd13786b-5ce4-472a-b7a4-3c8a1095f60d-optimize-47a2f322-5208-4a79-b64b-0e0001a294f2-target
+      selected: false
+      source: cd13786b-5ce4-472a-b7a4-3c8a1095f60d
+      sourceHandle: optimize
+      target: 47a2f322-5208-4a79-b64b-0e0001a294f2
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: answer
+      id: cd13786b-5ce4-472a-b7a4-3c8a1095f60d-confirm-a730d6fe-0e5d-458a-a89a-6ed359896aaf-target
+      selected: false
+      source: cd13786b-5ce4-472a-b7a4-3c8a1095f60d
+      sourceHandle: confirm
+      target: a730d6fe-0e5d-458a-a89a-6ed359896aaf
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: llm
+      id: cd13786b-5ce4-472a-b7a4-3c8a1095f60d-regenerate-25c59faf-65cb-417d-8224-ecee7abb2d1b-target
+      selected: false
+      source: cd13786b-5ce4-472a-b7a4-3c8a1095f60d
+      sourceHandle: regenerate
+      target: 25c59faf-65cb-417d-8224-ecee7abb2d1b
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 47a2f322-5208-4a79-b64b-0e0001a294f2-source-1b2f254f-5576-4b66-a16c-9496e7a79bab-target
+      selected: false
+      source: 47a2f322-5208-4a79-b64b-0e0001a294f2
+      sourceHandle: source
+      target: 1b2f254f-5576-4b66-a16c-9496e7a79bab
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 1b2f254f-5576-4b66-a16c-9496e7a79bab-source-3ce5c572-2e6a-49c5-948c-39e33d3623a2-target
+      selected: false
+      source: 1b2f254f-5576-4b66-a16c-9496e7a79bab
+      sourceHandle: source
+      target: 3ce5c572-2e6a-49c5-948c-39e33d3623a2
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d-true-dacb1fdb-e831-4a27-bd93-b49f8432260f-target
+      selected: false
+      source: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+      sourceHandle: 'true'
+      target: dacb1fdb-e831-4a27-bd93-b49f8432260f
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d-false-2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e-target
+      selected: false
+      source: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+      sourceHandle: 'false'
+      target: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e-source-3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f-target
+      selected: false
+      source: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+      sourceHandle: source
+      target: 3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f-source-dacb1fdb-e831-4a27-bd93-b49f8432260f-target
+      selected: false
+      source: 3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f
+      sourceHandle: source
+      target: dacb1fdb-e831-4a27-bd93-b49f8432260f
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-f699a737-1b58-4175-9bbb-3789a7c09e24-1788485737671-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: f699a737-1b58-4175-9bbb-3789a7c09e24
+      target: '1788485737671'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-32079b31-050c-4588-92d8-c7deb4b34176-1788485929866-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 32079b31-050c-4588-92d8-c7deb4b34176
+      target: '1788485929866'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-7e1d4408-33a0-49ce-8d16-c9bff369fdad-1788485955110-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 7e1d4408-33a0-49ce-8d16-c9bff369fdad
+      target: '1788485955110'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-7608f1de-4bcb-43f4-b066-626d4ee24d40-1788485979801-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 7608f1de-4bcb-43f4-b066-626d4ee24d40
+      target: '1788485979801'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-c51b7afc-a6c6-4e8c-a413-8adda9724d28-1788485992648-target
+      selected: false
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: c51b7afc-a6c6-4e8c-a413-8adda9724d28
+      target: '1788485992648'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1788485737671-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: '1788485737671'
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1788485929866-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: '1788485929866'
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1788485955110-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: '1788485955110'
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1788485979801-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: '1788485979801'
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1788485992648-source-affd5965-35f6-4ae2-88b3-265ffe344c91-target
+      selected: false
+      source: '1788485992648'
+      sourceHandle: source
+      target: affd5965-35f6-4ae2-88b3-265ffe344c91
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-true-24f494f7-6cf2-402e-bc32-0e2874313d13-target
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 'true'
+      target: 24f494f7-6cf2-402e-bc32-0e2874313d13
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: c9797b16-8ae9-456b-a89d-334f103fef58-false-1788485737671-target
+      source: c9797b16-8ae9-456b-a89d-334f103fef58
+      sourceHandle: 'false'
+      target: '1788485737671'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 收集竞品名称及功能描述，或接收上传的 PRD 文档（对应 sys.query 与 sys.files）
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 竞品名称及功能描述
+          max_length: 2000
+          options: []
+          required: false
+          type: text-input
+          variable: query
+      height: 152
+      id: 866c0a68-42dc-492b-9b5f-a95ae0e38405
+      position:
+        x: -615.9999999999998
+        y: -147.99999999999986
+      positionAbsolute:
+        x: -615.9999999999998
+        y: -147.99999999999986
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: empty
+            id: 9f4e6a1e-1bde-4319-923b-9315217a0e23
+            value: ''
+            varType: string
+            variable_selector:
+            - conversation
+            - current_prompt
+          id: 'true'
+          logical_operator: and
+        desc: current_prompt 为空时走完整生成链路；已有 Prompt 时进入问题分类器（实现迭代循环）
+        selected: false
+        title: 轮次路由
+        type: if-else
+      height: 183
+      id: 7b8d2de4-5937-4c47-b793-72037c052353
+      position:
+        x: -183.9999999999999
+        y: -143.99999999999986
+      positionAbsolute:
+        x: -183.9999999999999
+        y: -143.99999999999986
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: empty
+            id: 9f8e7d6c-0001-4a7b-8c9d-0e1f2a3b4c5d
+            value: ''
+            varType: array[file]
+            variable_selector:
+            - sys
+            - files
+          id: 'true'
+          logical_operator: and
+        desc: 判断用户是否上传了 PRD 文档；未上传则直接走 LLM① 文本分析，已上传则先提取并清洗摘要
+        selected: false
+        title: PRD路由
+        type: if-else
+      height: 183
+      id: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+      position:
+        x: 96
+        y: -144
+      positionAbsolute:
+        x: 96
+        y: -144
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 从上传的 PRD 文档中提取纯文本内容
+        selected: false
+        title: PRD文档提取
+        type: document-extractor
+        variables:
+        - variable: text
+          value_selector:
+          - sys
+          - files
+      height: 90
+      id: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+      position:
+        x: 376
+        y: 60
+      positionAbsolute:
+        x: 376
+        y: 60
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对 PRD 原文进行清洗与摘要，提炼竞品核心信息，降低下游 Token 消耗
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 4d5e6f7a-0001-4c9d-0e1f-2a3b4c5d6e7f
+          role: system
+          text: |
+            # Role
+            你是一名资深的 PRD（产品需求文档）清洗与摘要专家。你的任务是从用户上传的 PRD 文档中，精准提炼竞品的核心信息，去除版本历史、目录、流程图描述、重复内容等噪声，输出一份高度浓缩的摘要，以降低下游模型的 Token 消耗。
+
+            # 提炼要求
+            1. 只保留对「理解该竞品并生成产品开发 Prompt」有价值的信息
+            2. 忠实原文，不臆造、不遗漏关键功能与约束
+            3. 每条信息尽量精简，整体控制在 500 字以内
+            4. 若原始文本为空或无法识别，直接输出「（无 PRD 内容）」
+
+            # 输出格式
+            请严格按以下 Markdown 列表结构输出（不要输出代码块或其他废话）：
+            - 产品名称：xxx
+            - 一句话定位：xxx
+            - 目标用户：xxx
+            - 用户需求/痛点：xxx
+            - 核心功能（去重后逐条列出）：
+              1. xxx
+              2. xxx
+            - 关键使用场景：xxx
+            - 技术规格与交付要求（如 Dify 版本、可用大模型 deepseek/qwen、交付物为可导入 Dify 的 YML、用 Chatflow 实现等）：xxx
+            - 其他约束（合规/性能/风格等）：xxx
+        - id: 5e6f7a8b-0002-4c9d-0e1f-2a3b4c5d6e7f
+          role: user
+          text: "【PRD 原始文本】\n{{#2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e.text#}}"
+        selected: false
+        title: PRD清洗摘要
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 131
+      id: 3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f
+      position:
+        x: 656
+        y: 60
+      positionAbsolute:
+        x: 656
+        y: 60
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 意图识别并匹配 T1~T6 模版类别，输出 JSON
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.2
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 5b13c92b-a47a-4dc9-808f-8c4c7ad12207
+          role: system
+          text: "# Role\n你是一个资深的 AI 应用架构师和 Prompt 模版匹配专家。你的任务是分析用户输入的【竞品名称】及【基本功能描述】，并将其精准映射到最合适的\
+            \ Prompt 模版类别中。\n\n# Workflow\n1. **深度分析**：理解竞品的核心业务逻辑、目标用户及主要使用场景。\n\
+            2. **两级匹配策略**：\n   - **第一优先级（业务场景 T1-T6）**：优先判断竞品是否属于特定的垂直业务领域。\n   -\
+            \ **第二优先级（通用框架 G1-G5）**：若不属于 T1-T6，或者属于基础工具/通用型产品，则根据其功能复杂度，匹配最合适的 Prompt\
+            \ 编写框架。\n3. **结构化输出**：严格按照 JSON 格式输出分析结果，禁止包含 Markdown 代码块标记（如 ```json）或其他废话。\n\
+            \n# Template Definitions\n\n## 第一优先级：垂直业务场景 (T1-T6)\n- **T1_智能客服**：涉及在线客服、售后咨询、FAQ自动回复、投诉处理等。\n\
+            - **T2_营销文案**：涉及广告语、小红书/抖音种草、社媒运营、SEO文章、产品推广等。\n- **T3_数据分析**：涉及报表生成、用户行为分析、商业洞察、数据可视化解读等。\n\
+            - **T4_内容创作**：涉及长文写作、视频脚本、故事创作、新闻稿、公文写作等。\n- **T5_代码助手**：涉及编程辅助、Bug修复、代码解释、技术方案设计、SQL编写等。\n\
+            - **T6_角色扮演**：涉及虚拟人设对话、IP模拟、情感陪伴、心理咨询、历史人物重现等。\n\n## 第二优先级：通用 Prompt 框架\
+            \ (G1-G5)\n*(当竞品属于通用工具、效率软件或无法归类到上述垂直领域时，根据以下特征匹配)*\n- **G1_元提示词模板 (Meta-Prompt)**：适用于“让AI帮你写Prompt”的工具，或者强调自我反思、自我优化的复杂任务系统。\n\
+            - **G2_LangGPT 框架**：适用于需要高度结构化、模块化定义的复杂 Agent 或专业角色设定（强调 Profile, Skills,\
+            \ Rules 结构）。\n- **G3_CRISPE 框架**：适用于需要明确背景、角色、行动、格式的场景，特别是多步骤的任务执行类工具。\n\
+            - **G4_CO-STAR 框架**：适用于强调上下文(Context)、目标(Objective)和风格(Style)的内容生成或综合类应用。\n\
+            - **G5_Agent 工作流 (ReAct)**：适用于具有自主规划能力、能调用外部工具、进行搜索或执行多步推理的智能体应用。\n\n\
+            # Output Format\n请严格按以下 JSON 格式输出，不要输出其他内容：\n{\n  \"competitor_name\"\
+            : \"竞品名称\",\n  \"core_function\": \"核心功能概括（一句话）\",\n  \"scenario_analysis\"\
+            : \"场景分析（2-3句话）\",\n  \"matched_template\": \"T1/T2/T3/T4/T5/T6 或 G1/G2/G3/G4/G5\"\
+            ,\n  \"match_reason\": \"选择该模版的理由（解释为何匹配该业务场景或框架）\",\n  \"key_features\"\
+            : [\"功能点1\", \"功能点2\", \"功能点3\"],\n  \"suggested_role\": \"建议的角色定义\",\n\
+            \  \"suggested_constraints\": [\"约束1\", \"约束2\"]\n}"
+        - id: 63519684-4f7c-4c6d-a4cc-7564ec6ef93b
+          role: user
+          text: "竞品名称及功能描述：{{#sys.query#}}\n\n【PRD 清洗摘要】（若用户已上传 PRD，则此处为自动提炼的竞品核心信息；若为空请忽略）：\n{{#3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f.text#}}"
+        selected: false
+        title: LLM①意图识别&模板匹配
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 131
+      id: dacb1fdb-e831-4a27-bd93-b49f8432260f
+      position:
+        x: 212.3684659707909
+        y: -215.48171620459598
+      positionAbsolute:
+        x: 212.3684659707909
+        y: -215.48171620459598
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 2f82f27c-3fcb-4f63-8461-a01c47ca76f0
+            value: T1
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 'true'
+          logical_operator: and
+        - case_id: bc880779-17ae-4cea-9f9f-529a63f66360
+          conditions:
+          - comparison_operator: contains
+            id: 7484d847-8918-449a-9574-21517c5b3dff
+            value: T2
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: bc880779-17ae-4cea-9f9f-529a63f66360
+          logical_operator: and
+        - case_id: cd8f2d96-cec7-44b1-a437-4f47de3a2237
+          conditions:
+          - comparison_operator: contains
+            id: f991b712-f533-4f78-a2fb-cc1a4f95d902
+            value: T3
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: cd8f2d96-cec7-44b1-a437-4f47de3a2237
+          logical_operator: and
+        - case_id: 284f5ac0-51ea-4195-b44b-7c9df4be442a
+          conditions:
+          - comparison_operator: contains
+            id: 12f7551e-c69b-4329-a242-6be09f0f0e87
+            value: T4
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 284f5ac0-51ea-4195-b44b-7c9df4be442a
+          logical_operator: and
+        - case_id: 59c1ea29-c904-480d-9165-75eb2646b9ba
+          conditions:
+          - comparison_operator: contains
+            id: f45f0c1d-e5e3-42bd-af22-ea6f587a72f0
+            value: T5
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 59c1ea29-c904-480d-9165-75eb2646b9ba
+          logical_operator: and
+        - case_id: 190c3dab-181a-4336-a7a8-d84a4841614f
+          conditions:
+          - comparison_operator: contains
+            id: bb366149-93b5-4c9c-9689-f5938df88fe9
+            value: T6
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 190c3dab-181a-4336-a7a8-d84a4841614f
+          logical_operator: and
+        - case_id: f699a737-1b58-4175-9bbb-3789a7c09e24
+          conditions:
+          - comparison_operator: contains
+            id: a623e06c-d13b-4486-bbfb-c4f608cb7560
+            value: G1
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: f699a737-1b58-4175-9bbb-3789a7c09e24
+          logical_operator: and
+        - case_id: 32079b31-050c-4588-92d8-c7deb4b34176
+          conditions:
+          - comparison_operator: contains
+            id: 3898dbd7-23db-4c25-99f7-81cb89cf0b35
+            value: G2
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 32079b31-050c-4588-92d8-c7deb4b34176
+          logical_operator: and
+        - case_id: 7e1d4408-33a0-49ce-8d16-c9bff369fdad
+          conditions:
+          - comparison_operator: contains
+            id: 11f1b1d5-1d57-406b-b046-93529ae4f095
+            value: G3
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 7e1d4408-33a0-49ce-8d16-c9bff369fdad
+          logical_operator: and
+        - case_id: 7608f1de-4bcb-43f4-b066-626d4ee24d40
+          conditions:
+          - comparison_operator: contains
+            id: 9bc0bbe5-9472-4168-84f2-ab63eea05f83
+            value: G4
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: 7608f1de-4bcb-43f4-b066-626d4ee24d40
+          logical_operator: and
+        - case_id: c51b7afc-a6c6-4e8c-a413-8adda9724d28
+          conditions:
+          - comparison_operator: contains
+            id: 685d230d-c421-40bc-ba6a-9d010a52572f
+            value: G5
+            varType: string
+            variable_selector:
+            - dacb1fdb-e831-4a27-bd93-b49f8432260f
+            - text
+          id: c51b7afc-a6c6-4e8c-a413-8adda9724d28
+          logical_operator: and
+        desc: 根据 matched_template 路由到对应知识检索；ELSE 默认走 T1
+        selected: false
+        title: 条件分支-模版路由
+        type: if-else
+      height: 647
+      id: c9797b16-8ae9-456b-a89d-334f103fef58
+      position:
+        x: 529.5551896467244
+        y: -239.6340495453515
+      positionAbsolute:
+        x: 529.5551896467244
+        y: -239.6340495453515
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T1 智能客服（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T1
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T1 智能客服
+        type: knowledge-retrieval
+      height: 133
+      id: 24f494f7-6cf2-402e-bc32-0e2874313d13
+      position:
+        x: 1160
+        y: 65.11854802899363
+      positionAbsolute:
+        x: 1160
+        y: 65.11854802899363
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T2 营销文案（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T2
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T2 营销文案
+        type: knowledge-retrieval
+      height: 133
+      id: 1cfecc1f-af00-4366-b835-5022da034ca6
+      position:
+        x: 1160
+        y: 220
+      positionAbsolute:
+        x: 1160
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T3 数据分析（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T3
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T3 数据分析
+        type: knowledge-retrieval
+      height: 133
+      id: 8a8e7656-4eac-45f2-8d80-c197440872c7
+      position:
+        x: 1160
+        y: 360
+      positionAbsolute:
+        x: 1160
+        y: 360
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T4 内容创作（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T4
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T4 内容创作
+        type: knowledge-retrieval
+      height: 133
+      id: 6e649d4c-6d0b-4713-9581-392bc87e7361
+      position:
+        x: 1160
+        y: 500
+      positionAbsolute:
+        x: 1160
+        y: 500
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T5 代码助手（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T5
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T5 代码助手
+        type: knowledge-retrieval
+      height: 133
+      id: 4a5eb985-3ee9-4c40-a980-e01d117112c8
+      position:
+        x: 1160
+        y: 640
+      positionAbsolute:
+        x: 1160
+        y: 640
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        desc: 检索「Prompt模版知识库」- T6 角色扮演（导入后请替换 dataset_ids）
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 1
+        query_attachment_selector: []
+        query_variable_selector:
+        - env
+        - QUERY_T6
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索-T6 角色扮演
+        type: knowledge-retrieval
+      height: 133
+      id: 69b7268a-b81b-4383-8420-9aaa6b8494d2
+      position:
+        x: 1160
+        y: 780
+      positionAbsolute:
+        x: 1160
+        y: 780
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 汇聚 6 路知识检索结果（仅执行分支有值）
+        output_type: array[object]
+        selected: false
+        title: 知识检索结果汇聚
+        type: variable-aggregator
+        variables:
+        - - 24f494f7-6cf2-402e-bc32-0e2874313d13
+          - result
+        - - 1cfecc1f-af00-4366-b835-5022da034ca6
+          - result
+        - - 8a8e7656-4eac-45f2-8d80-c197440872c7
+          - result
+        - - 6e649d4c-6d0b-4713-9581-392bc87e7361
+          - result
+        - - 4a5eb985-3ee9-4c40-a980-e01d117112c8
+          - result
+        - - 69b7268a-b81b-4383-8420-9aaa6b8494d2
+          - result
+        - - '1788485992648'
+          - result
+        - - '1788485979801'
+          - result
+        - - '1788485955110'
+          - result
+        - - '1788485929866'
+          - result
+        - - '1788485737671'
+          - result
+      height: 415
+      id: affd5965-35f6-4ae2-88b3-265ffe344c91
+      position:
+        x: 1440
+        y: 420
+      positionAbsolute:
+        x: 1440
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "def main(result: list) -> dict:\n    if not result:\n        return\
+          \ {\"text\": \"\"}\n    parts = []\n    for item in result:\n        if\
+          \ isinstance(item, dict):\n            parts.append(str(item.get(\"content\"\
+          ) or item.get(\"title\") or item))\n        else:\n            parts.append(str(item))\n\
+          \    return {\"text\": \"\\n\\n\".join(parts)}\n"
+        code_language: python3
+        desc: 将知识检索 result 转为纯文本，供下游 Prompt 引用
+        outputs:
+          text:
+            children: null
+            type: string
+        selected: false
+        title: 模版结果文本化
+        type: code
+        variables:
+        - value_selector:
+          - affd5965-35f6-4ae2-88b3-265ffe344c91
+          - output
+          variable: result
+      height: 95
+      id: 4e20fcaf-7fd8-416e-b735-20f6c6c41d19
+      position:
+        x: 1720
+        y: 420
+      positionAbsolute:
+        x: 1720
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 将分析报告与模版正文写入会话变量，供后续轮次复用
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - dacb1fdb-e831-4a27-bd93-b49f8432260f
+          - text
+          variable_selector:
+          - conversation
+          - analysis_report
+        - input_type: variable
+          operation: over-write
+          value:
+          - 4e20fcaf-7fd8-416e-b735-20f6c6c41d19
+          - text
+          variable_selector:
+          - conversation
+          - template_content
+        selected: false
+        title: 保存分析与模版
+        type: assigner
+        version: '2'
+      height: 153
+      id: c50893c3-d192-4791-9e49-21327c959d88
+      position:
+        x: 2000
+        y: 420
+      positionAbsolute:
+        x: 2000
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 基于竞品分析与参考模版生成 Prompt 初稿
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.4
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 47bd5a63-ead3-46a2-91d4-2c44a3c5657a
+          role: system
+          text: '你是一个资深 Prompt 工程师，专门为 AI 编程工具（vibe coding）编写「产品开发 Prompt」。
+
+            你产出的 Prompt 会被直接交给 AI 编程工具，由它据此编写代码、生成工程文件（如 Dify 的 Chatflow YML）。因此你只负责「写提示词」，绝不直接输出代码、YML、Chatflow 配置等工程内容。
+
+            请根据以下信息生成一版高质量的产品开发 Prompt：
+
+            【竞品分析】
+
+            {{#conversation.analysis_report#}}
+
+            【参考模版】
+
+            {{#conversation.template_content#}}
+
+            要求：
+
+            1. 严格参考模版的结构，但内容必须针对用户提供的竞品进行深度定制
+
+            2. 明确产品定位、角色与目标用户
+
+            3. 任务描述要覆盖竞品的核心功能场景与交互流程
+
+            4. 约束规则要结合竞品的实际业务特点与目标技术栈
+
+            5. 输出格式要明确、可执行，便于 AI 编程工具理解并落地
+
+            6. 若用户提供了技术规格（如 Dify 版本、可用大模型 deepseek/qwen、交付物为可导入 Dify 的 YML、用 Chatflow 实现、核心功能等），必须把这些作为「技术规格与交付要求」写进 Prompt，而不是直接生成这些文件
+
+            7. 在 Prompt 末尾预留 {{user_input}} 占位符，表示用户实际输入的位置
+
+            只输出完整的 Prompt 本身（用 Markdown 代码块包裹），不要输出任何代码、YML 或 Chatflow 配置。
+            '
+        selected: false
+        title: LLM②初稿生成
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 131
+      id: 25c59faf-65cb-417d-8224-ecee7abb2d1b
+      position:
+        x: 2280
+        y: 420
+      positionAbsolute:
+        x: 2280
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 为初稿自动生成 3 组 Few-Shot 示例
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 16c50fa3-9b08-4372-98f6-cda191728013
+          role: system
+          text: "你是一个 Few-Shot 示例生成专家。你的任务是为给定的 Prompt 自动生成高质量的输入-输出示例对。\n\n【任务背景】\n\
+            {{#conversation.analysis_report#}}\n\n【当前 Prompt】\n{{#25c59faf-65cb-417d-8224-ecee7abb2d1b.text#}}\n\
+            \n请生成 3 组 Few-Shot 示例，遵循以下规则：\n\n1. 【覆盖度】3 组示例必须覆盖不同的典型场景：\n   - 示例1：最常见/基础的用例（正常路径）\n\
+            \   - 示例2：较复杂或有特殊要求的用例（进阶路径）\n   - 示例3：边界情况或容易出错的用例（防御路径）\n\n2. 【格式要求】每组示例包含：\n\
+            \   - Input：模拟用户真实输入（要自然、口语化，像真实用户会说的话）\n   - Output：该 Prompt 应该产出的理想回答（要完整、高质量）\n\
+            \n3. 【质量标准】\n   - Input 要多样化，避免句式雷同\n   - Output 必须严格遵循 Prompt 中定义的约束规则\n\
+            \   - 示例3 的 Output 要展示正确的边界处理方式（如拒绝不当请求、引导转人工等）\n\n请严格按以下格式输出：\n\n###\
+            \ Few-Shot 示例\n\n**示例1（基础场景）**\nInput:\nOutput:\n\n**示例2（进阶场景）**\nInput:\n\
+            Output:\n\n**示例3（边界场景）**\nInput:\nOutput:\n"
+        selected: false
+        title: LLM③Few-Shot自动生成
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 115
+      id: 3b1e7295-39a0-4287-9d11-5d2fa6138044
+      position:
+        x: 2560
+        y: 420
+      positionAbsolute:
+        x: 2560
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 合并初稿与 Few-Shot，输出完整 Prompt
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 96dd1d06-b0ce-4504-bf70-2990c24958d9
+          role: system
+          text: '你是一个 Prompt 交付物整合专家，专门为 AI 编程工具（vibe coding）整合最终的产品开发 Prompt。
+
+            你产出的 Prompt 会被直接交给 AI 编程工具，由它据此编写代码、生成工程文件（如 Dify 的 Chatflow YML）。你只负责「写提示词」，绝不直接输出代码、YML、Chatflow 配置。
+
+            【Prompt 初稿】
+
+            {{#25c59faf-65cb-417d-8224-ecee7abb2d1b.text#}}
+
+            【Few-Shot 示例】
+
+            {{#3b1e7295-39a0-4287-9d11-5d2fa6138044.text#}}
+
+            要求：
+
+            1. 将 Few-Shot 示例嵌入到 Prompt 的合适位置（通常在约束规则之后、输出格式之前）
+
+            2. 确保示例与 Prompt 的约束规则完全一致
+
+            3. 最终输出一份结构完整、可直接复制使用的产品开发 Prompt
+
+            4. 用 Markdown 代码块包裹最终 Prompt
+
+            5. 在代码块之后，简要说明这份 Prompt 的设计要点（3-5 条）
+
+            6. 不要把任何代码、YML、Chatflow 配置作为直接输出内容；如需提及，一律作为 Prompt 中的「技术规格与交付要求」描述
+
+            只输出完整的 Prompt 本身 + 简短设计要点，不要输出任何代码、YML 或 Chatflow 配置。
+            '
+        selected: false
+        title: LLM④组装输出
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 131
+      id: 11fda064-efe3-4fe5-ad21-f8358b465ac6
+      position:
+        x: 2840
+        y: 420
+      positionAbsolute:
+        x: 2840
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 保存组装后的 Prompt 到会话变量
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - 11fda064-efe3-4fe5-ad21-f8358b465ac6
+          - text
+          variable_selector:
+          - conversation
+          - current_prompt
+        selected: false
+        title: 保存当前Prompt
+        type: assigner
+        version: '2'
+      height: 111
+      id: 8f759ea5-d5f8-4abc-a915-b70743c06b6f
+      position:
+        x: 3120
+        y: 420
+      positionAbsolute:
+        x: 3120
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: '{{#conversation.current_prompt#}}'
+        desc: 输出首轮/重新生成后的完整 Prompt
+        selected: false
+        title: 回答-生成结果
+        type: answer
+        variables: []
+      height: 130
+      id: 5159a589-e1e8-4fbf-9a43-7a7c170e7f0b
+      position:
+        x: 3400
+        y: 420
+      positionAbsolute:
+        x: 3400
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        classes:
+        - id: optimize
+          name: 优化修改
+        - id: confirm
+          name: 确认完成
+        - id: regenerate
+          name: 重新生成
+        desc: 根据用户反馈路由到优化 / 完成 / 重生成
+        instruction: 将用户意图分为三类：1) 优化修改——用户希望调整当前 Prompt，或补充/新增需求（如技术规格、Dify 版本、大模型、交付物格式、新增功能等）；2) 确认完成——用户表示满意或结束（可以了、没问题、很好）；3)
+          重新生成——用户希望推倒重来（重新写、换个方向、不满意）。若无法判断，优先选择优化修改。
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        query_variable_selector:
+        - sys
+        - query
+        selected: false
+        title: 问题分类器
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 263
+      id: cd13786b-5ce4-472a-b7a4-3c8a1095f60d
+      position:
+        x: 232.00000000000023
+        y: 508
+      positionAbsolute:
+        x: 232.00000000000023
+        y: 508
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 按用户意见微创优化当前 Prompt
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 7e82c454-ee32-4075-89aa-928c9f95ae16
+          role: system
+          text: '你是一个 Prompt 迭代优化专家，专门为 AI 编程工具（vibe coding）维护「产品开发 Prompt」。
+
+            你产出的 Prompt 会被直接交给 AI 编程工具，由它据此编写代码、生成工程文件（如 Dify 的 Chatflow YML）。你只负责「写/改提示词」，绝不直接输出代码、YML、Chatflow 配置等工程内容。
+
+            【当前版本 Prompt】
+
+            {{#conversation.current_prompt#}}
+
+            【用户优化意见 / 新增需求】
+
+            {{#sys.query#}}
+
+            请按以下步骤执行：
+
+            1. 理解用户意见的核心诉求（可能是调整语气/约束/示例，也可能是补充技术规格、新增功能、指定交付物格式等）
+
+            2. 对当前 Prompt 进行针对性修改（仅修改需要改动的部分，保留其他内容）
+
+            3. 若用户提供了技术规格（Dify 版本、大模型 deepseek/qwen、可导入 Dify 的 YML、Chatflow 实现、核心功能等），将这些内容作为「技术规格与交付要求」融入 Prompt，而不是直接生成这些文件
+
+            4. 若用户新增了功能需求（如「结束聊天时选择颜色 → 生成情绪胶囊 → 保存 → 列表展示」），把这些写进 Prompt 的功能与交互流程部分
+
+            5. 若意见涉及 Few-Shot 示例，同步更新示例
+
+            6. 输出修改后的完整 Prompt（用 Markdown 代码块包裹）
+
+            7. 在代码块之后，用一句话说明本次修改了什么
+
+            注意：
+
+            - 不要大幅重写，保持「微创修改」原则。
+
+            - 无论用户提到什么（yml、chatflow、dify、代码、颜色选择等），你的输出永远是一份「产品开发 Prompt」，绝不输出任何代码、YML 或 Chatflow 配置。
+            '
+        selected: false
+        title: LLM⑤迭代优化
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 115
+      id: 47a2f322-5208-4a79-b64b-0e0001a294f2
+      position:
+        x: 1428.5371548760772
+        y: 927.4003272489765
+      positionAbsolute:
+        x: 1428.5371548760772
+        y: 927.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 用优化后的 Prompt 覆盖会话变量
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - 47a2f322-5208-4a79-b64b-0e0001a294f2
+          - text
+          variable_selector:
+          - conversation
+          - current_prompt
+        selected: false
+        title: 更新当前Prompt
+        type: assigner
+        version: '2'
+      height: 111
+      id: 1b2f254f-5576-4b66-a16c-9496e7a79bab
+      position:
+        x: 1690.0008047105982
+        y: 927.4003272489765
+      positionAbsolute:
+        x: 1690.0008047105982
+        y: 927.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: '{{#conversation.current_prompt#}}'
+        desc: 输出迭代优化后的 Prompt；下一轮用户消息将再次进入问题分类器
+        selected: false
+        title: 回答-优化结果
+        type: answer
+        variables: []
+      height: 146
+      id: 3ce5c572-2e6a-49c5-948c-39e33d3623a2
+      position:
+        x: 2105.7743522757746
+        y: 956.8670404100334
+      positionAbsolute:
+        x: 2105.7743522757746
+        y: 956.8670404100334
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: '已确认完成。以下是最终 Prompt：
+
+
+          {{#conversation.current_prompt#}}
+
+          '
+        desc: 用户确认完成后输出最近一轮 Prompt
+        selected: false
+        title: 回答-确认完成
+        type: answer
+        variables: []
+      height: 146
+      id: a730d6fe-0e5d-458a-a89a-6ed359896aaf
+      position:
+        x: 858.3088680849125
+        y: 1383.4867883975724
+      positionAbsolute:
+        x: 858.3088680849125
+        y: 1383.4867883975724
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 7-G1
+        type: knowledge-retrieval
+      height: 89
+      id: '1788485737671'
+      position:
+        x: 1160
+        y: 927.4003272489765
+      positionAbsolute:
+        x: 1160
+        y: 927.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 8-G2
+        type: knowledge-retrieval
+      height: 89
+      id: '1788485929866'
+      position:
+        x: 1160
+        y: 1055.4003272489765
+      positionAbsolute:
+        x: 1160
+        y: 1055.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 9-G3
+        type: knowledge-retrieval
+      height: 89
+      id: '1788485955110'
+      position:
+        x: 1160
+        y: 1183.4003272489765
+      positionAbsolute:
+        x: 1160
+        y: 1183.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 10-G4
+        type: knowledge-retrieval
+      height: 89
+      id: '1788485979801'
+      position:
+        x: 1160
+        y: 1311.4003272489765
+      positionAbsolute:
+        x: 1160
+        y: 1311.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - claSz9QrH0EQNZD4ADYIDEvayQj7aolKdrXr92LIh3oZW+LDIp2OPGhgJpBOYUk6
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: qwen3-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 11-G5
+        type: knowledge-retrieval
+      height: 89
+      id: '1788485992648'
+      position:
+        x: 1160
+        y: 1439.4003272489765
+      positionAbsolute:
+        x: 1160
+        y: 1439.4003272489765
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: 381.95516680465414
+      y: 319.17522979129933
+      zoom: 0.4198256960340113
+  rag_pipeline_variables: []

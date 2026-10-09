@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大模型驱动的技术选型工作流</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">TS</span>
+      <div class="brand-text">
+        <h1>大模型驱动的技术选型工作流</h1>
+        <p class="subtitle">输入业务约束 → DeepSeek 分析 → 结构化选型报告</p>
+      </div>
+    </div>
+    <div class="health" id="health-badge" data-state="pending" title="GET /health">
+      <span class="dot"></span>
+      <span id="health-text">检测中…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card input-panel">
+      <h2>业务约束</h2>
+      <p class="hint">请描述业务场景、性能要求、团队规模、预算等，条件越具体，选型建议越可靠。</p>
+
+      <label class="sr-only" for="description">业务约束描述</label>
+      <textarea id="description" rows="11" spellcheck="false"
+        placeholder="例如：我们是一个 5 人的后端小团队，要做一个日活 10 万的电商订单系统，要求高并发写入、强一致性事务、预算有限，团队熟悉 Python 和 Java，请推荐合适的数据库与后端框架组合。"></textarea>
+
+      <div class="examples">
+        <span class="examples-label">快速示例</span>
+        <button type="button" class="chip" data-example="ecommerce">电商订单系统</button>
+        <button type="button" class="chip" data-example="realtime">实时消息推送</button>
+        <button type="button" class="chip" data-example="analytics">数据报表分析</button>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="submit-btn" class="btn primary">生成选型报告</button>
+        <button type="button" id="clear-btn" class="btn ghost">清空</button>
+        <span class="counter"><span id="char-count">0</span> 字 · Ctrl + Enter 提交</span>
+      </div>
+
+      <p class="error-box" id="error-box" hidden></p>
+    </section>
+
+    <section class="card report-panel">
+      <div class="report-head">
+        <h2>选型报告</h2>
+        <div class="report-tools">
+          <button type="button" id="copy-btn" class="btn ghost small" hidden>复制为 Markdown</button>
+          <button type="button" id="json-btn" class="btn ghost small" hidden>原始 JSON</button>
+        </div>
+      </div>
+
+      <div class="report-body" id="report-body">
+        <div class="empty-state" id="empty-state">
+          <p class="empty-title">尚未生成报告</p>
+          <p class="hint">在左侧输入业务约束后点击「生成选型报告」。</p>
+        </div>
+      </div>
+
+      <pre class="json-view" id="json-view" hidden></pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    FastAPI + OpenAI SDK 兼容模式（DeepSeek）· 接口 <code>POST /analyze</code> ·
+    <a href="/docs" target="_blank" rel="noreferrer">Swagger UI</a>
+  </footer>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
